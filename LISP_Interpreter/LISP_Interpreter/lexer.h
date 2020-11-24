@@ -1,4 +1,4 @@
-﻿#ifndef _LEXER_
+#ifndef _LEXER_
 #define _LEXER_
 #include <stdio.h>
 #include "c_list.h"
@@ -9,6 +9,7 @@
 #define DIGIT 1
 #define UNKNOWN 99
 
+/* Global Variable */
 #define MAX_LEXEME_LEN 100	//lexeme ���̸� ����
 #define MAX_COMMAND_LEN 100
 int nextToken;

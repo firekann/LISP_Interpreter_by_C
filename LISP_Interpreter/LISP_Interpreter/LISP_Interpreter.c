@@ -22,12 +22,12 @@ int main()
 	dict = initialize_dict();
 	while (1) {
 		obj_list = initialize_list();
+
 		printf("Enter the lisp line: ");
 		scanf("%[^\n]s", command);
 		getchar();
 		commandLen = strlen(command);
 		cursor = 0;
-
 		getChar();
 		do {
 			lex();
