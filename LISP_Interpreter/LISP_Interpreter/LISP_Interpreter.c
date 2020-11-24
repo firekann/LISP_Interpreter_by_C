@@ -18,15 +18,14 @@
 /* main driver                            */
 /******************************************/
 int main()
-{
-	/* Open the input data file and process its contents */
-	if ((in_fp = fopen("code.in", "r")) == NULL) {
-		printf("ERROR - cannot open code.in \n");
-	}
-	else if ((out_fp = fopen("code.out", "w")) == NULL) {  /* Open the output data file */
-		printf("ERROR - cannot open code.out \n");
-	}
-	else {
+{		
+	while(1){
+		printf("Enter the lisp line: ");
+		scanf("%[^\n]s", command);
+		getchar();
+		commandLen = strlen(command);
+		cursor = 0;
+		
 		getChar();
 		do {
 			lex();

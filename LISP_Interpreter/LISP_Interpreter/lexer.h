@@ -1,5 +1,5 @@
-#ifndef C_DICTIONARY
-#define C_DICTIONARY
+#ifndef _LEXER_
+#define _LEXER_
 
 #include <stdio.h>
 
@@ -9,13 +9,17 @@
 #define UNKNOWN 99
 
 /* Global Variable */
-#define MAX_LEXEME_LEN 100	//lexeme ±æÀÌ¸¦ Á¶Àý
+#define MAX_LEXEME_LEN 100	//lexeme ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+#define MAX_COMMAND_LEN 100
 int nextToken;
 int charClass;
 char lexeme[MAX_LEXEME_LEN];
 char nextChar;
 int lexLen;
 int token;
+int commandLen;
+int cursor;
+char command[MAX_COMMAND_LEN];
 
 FILE *in_fp;
 FILE *out_fp; /* for save code.out */

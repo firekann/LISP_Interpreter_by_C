@@ -94,7 +94,8 @@ void addChar() {
 of input and determine its character class */
 /*****************************************************/
 void getChar() {
-	if ((nextChar = getc(in_fp)) != EOF) {
+	if (cursor < commandLen) {
+		nextChar = command[cursor++];
 		nextChar = toupper(nextChar);	//대소문자 구분안하는 것에대한 처리 : 모든 문자를 uppercase로 바꿔줌
 		if (isalpha(nextChar))
 			charClass = LETTER;
@@ -265,7 +266,7 @@ int lex() {
 	printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
 
 	/* print to code.out file */
-	fprintf(out_fp, "Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
+	// fprintf(out_fp, "Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
 
 	return nextToken;
 } /* End of function lex */
