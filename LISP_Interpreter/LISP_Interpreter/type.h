@@ -14,10 +14,10 @@
 
 
 /* 1. 사칙연산 */
-#define ADD_OP 102
-#define SUB_OP 103
-#define MULT_OP 104
-#define DIV_OP 105
+#define ADD_OP 101
+#define SUB_OP 102
+#define MULT_OP 103
+#define DIV_OP 104
 
 /* 2. 기본함수*/
 #define SETQ 200
@@ -61,15 +61,16 @@
 #define RIGHT_PAREN 507
 #define SEMI_COLON 508
 #define SHARP 509
+#define STRING 510
 
 typedef struct T_OBJ* P_OBJ;
 typedef struct {
 	int type;
 	int lexed_len;
-	char *t_string;
+	char* t_string;
 	int t_int;
 	float t_float;
-	P_OBJ t_list;
+	P_OBJ t_list_value, next;
 }T_OBJ;
 
 #endif

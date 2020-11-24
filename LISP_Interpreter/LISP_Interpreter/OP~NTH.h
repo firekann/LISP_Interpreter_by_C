@@ -3,4 +3,6 @@
 
 #include "type.h"
 
+T_OBJ fn_setq(T_OBJ *);
+
 #endif
