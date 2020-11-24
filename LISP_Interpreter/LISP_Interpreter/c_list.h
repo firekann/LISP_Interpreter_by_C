@@ -12,7 +12,7 @@ typedef struct {
 
 typedef struct {
 	int list_size;
-	LIST_NODE* head;
+	NODE_P head;
 }c_LIST;
 
 c_LIST* initialize_list();

@@ -203,19 +203,28 @@ int lex() {
 				}
 				if (flag) {
 					for (int i = 0; i < lexLen - 3; i++) {
+						T_OBJ tmp_obj = create_obj();
+						tmp_obj.lexed_len = 4;
+						tmp_obj.type = T_CODE;
+						tmp_obj.t_string = (char*)malloc(sizeof(char) * tmp_obj.lexed_len);
 						if (tmp_arr[i] == CAR) {
+							strcpy(tmp_obj.t_string, "CAR");
 							printf("Next token is: %d, Next lexeme is %s\n", CAR, "CAR");
 						}
 						else {
+							strcpy(tmp_obj.t_string, "CDR");
 							printf("Next token is: %d, Next lexeme is %s\n", CDR, "CDR");
 						}
+						insert_list_node(obj_list, &tmp_obj);
 					}
 					if (tmp_arr[lexLen - 3] == CAR) {
 						nextToken = CAR;
+						lexLen = 3;
 						strcpy(lexeme, "CAR");
 					}
 					else {
 						nextToken = CDR;
+						lexLen = 3;
 						strcpy(lexeme, "CDR");
 					}
 				}
@@ -263,6 +272,10 @@ int lex() {
 		break;
 	} /* End of switch */
 
+
+	T_OBJ tmp_obj = create_obj();
+	insert_list_node(obj_list, &tmp_obj);
+
 	printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
 
 	/* print to code.out file */
@@ -270,3 +283,26 @@ int lex() {
 
 	return nextToken;
 } /* End of function lex */
+
+/* 리스트에 lexeme들을 타입을 지정해서 저장하기 위해서 obj를 생성해주는 함수 */
+T_OBJ create_obj() {
+	T_OBJ tmp;
+	if (nextToken == EOF) {
+		lexLen = 3;
+		tmp.type = T_NIL;
+	}
+	else if (nextToken == INT) {
+		tmp.type = T_INT;
+		tmp.t_int = atoi(lexeme);
+	}
+	else if (nextToken == FLOAT) {
+		tmp.type = T_FLOAT;
+		tmp.t_float = atof(lexeme);
+	}
+	else if (nextToken == IDENT) tmp.type = T_SYMBOL;	//lex과정에서는 string 타입의 경우에도 여기에 담김
+	else if (100 <= nextToken && nextToken <= 500) tmp.type = T_CODE;
+	tmp.lexed_len = lexLen;
+	tmp.t_string = (char*)malloc(sizeof(char)*(lexLen + 1));
+	strcpy(tmp.t_string, lexeme);
+	return tmp;
+}

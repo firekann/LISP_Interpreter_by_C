@@ -13,7 +13,7 @@ typedef struct {
 
 typedef struct {
 	int dict_size;
-	DICT_NODE* head;
+	NODE_PTR* head;
 }c_DICT;
 
 c_DICT* initialize_dict();

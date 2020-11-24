@@ -24,4 +24,5 @@ T_OBJ pop(c_STACK* stack) {
 
 void push(c_STACK* stack, T_OBJ* obj) {
 	insert_list_node(stack->stack, obj);
+	return;
 }

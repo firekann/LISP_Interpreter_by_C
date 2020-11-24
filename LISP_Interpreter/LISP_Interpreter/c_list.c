@@ -11,21 +11,29 @@ c_LIST* initialize_list() {
 
 void free_list(c_LIST* list) {
 	LIST_NODE* node = list->head;
-	while (node)
+	while (node != NULL)
 	{
 		LIST_NODE* n_node = node->next;
 		free(node);	//노드 free
 		node = n_node;
 	}
 	free(list);
+	return;
 }
 
 void insert_list_node(c_LIST* list, T_OBJ* obj) {
 	LIST_NODE* new_node = (LIST_NODE*)malloc(sizeof(LIST_NODE));
 	new_node->value = *obj;
-	new_node->next = list->head;
-	list->head = new_node;
+	new_node->next = NULL;
+	if (list->list_size == 0) {	//크기가 0일 경우
+		list->head = new_node;
+	}
+	else {
+		new_node->next = list->head;
+		list->head = new_node;
+	}
 	list->list_size++;
+	return;
 }
 
 
@@ -43,11 +51,12 @@ void delete_list_node(c_LIST* list, T_OBJ* obj) {
 		pre_node = cur_node;
 		cur_node = cur_node->next;
 	}
+	return;
 }
 
 T_OBJ get_list_obj(c_LIST* list, T_OBJ* obj) {
 	LIST_NODE* node = list->head;
-	while (node)
+	while (node != NULL)
 	{
 		if (obj->type == node->value.type && !strcmp(obj->t_string, node->value.t_string)) {
 			return node->value;
