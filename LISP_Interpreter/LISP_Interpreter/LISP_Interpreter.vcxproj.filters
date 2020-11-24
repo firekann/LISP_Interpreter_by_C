@@ -30,6 +30,15 @@
     <ClCompile Include="lexer.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="OP~NTH.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CONS~SUBST.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ATOM~COND.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="c_stack.h">
@@ -45,6 +54,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="lexer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="OP~NTH.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CONS~SUBST.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ATOM~COND.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

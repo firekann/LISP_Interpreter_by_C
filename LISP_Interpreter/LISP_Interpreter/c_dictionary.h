@@ -19,7 +19,7 @@ typedef struct {
 c_DICT* initialize_dict();
 void free_dict(c_DICT*);
 void free_node(DICT_NODE*);
-bool insert_dict_node(c_DICT*, char*, T_OBJ*);
+void insert_dict_node(c_DICT*, char*, T_OBJ*);
 void delete_dict_node(c_DICT*, char*);
 bool has_dict_key(c_DICT*, char*);
 T_OBJ get_dict_obj(c_DICT*, char*);
