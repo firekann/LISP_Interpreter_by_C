@@ -42,9 +42,18 @@ void delete_dict_node(c_DICT* dict, char* key) {
 	}
 }
 
-bool insert_dict_node(c_DICT* dict, char* key, T_OBJ* obj) {
-	if (has_dict_key(dict, key)) {	//이미 존재하는 key일 경우 false 반환
-		return false;
+void insert_dict_node(c_DICT* dict, char* key, T_OBJ* obj) {
+	if (has_dict_key(dict, key)) {	//이미 존재하는 key일 경우 할당 해제하고 obj교체
+		DICT_NODE* node = dict->head;
+		while (node != NULL)
+		{
+			if (!strcmp(key, node->key)) {
+				node->value = *obj;
+				break;
+			}
+			node = node->next;
+		}
+		return;
 	}
 	DICT_NODE* new_node = (DICT_NODE*)malloc(sizeof(DICT_NODE));
 	new_node->key = (char*)malloc(sizeof(char)*(strlen(key) + 1));
@@ -63,7 +72,7 @@ bool insert_dict_node(c_DICT* dict, char* key, T_OBJ* obj) {
 		node->next = new_node;
 	}
 	dict->dict_size++;
-	return true;
+	return;
 }
 
 bool has_dict_key(c_DICT* dict, char* key) {
