@@ -29,8 +29,13 @@ void insert_list_node(c_LIST* list, T_OBJ* obj) {
 		list->head = new_node;
 	}
 	else {
-		new_node->next = list->head;
-		list->head = new_node;
+		LIST_NODE* node = list->head;
+		while (node->next != NULL)
+		{
+			LIST_NODE* n_node = node->next;
+			node = n_node;
+		}
+		node->next = new_node;
 	}
 	list->list_size++;
 	return;

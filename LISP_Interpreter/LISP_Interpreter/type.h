@@ -4,6 +4,7 @@
 /* Token codes */
 
 /* 타입추론을 위한 정의 */
+/*
 #define T_NIL 1001
 #define T_CODE 1002
 #define T_LIST 1003
@@ -11,7 +12,7 @@
 #define T_FLOAT 1005
 #define T_INT 1006
 #define T_SYMBOL 1007
-
+*/
 
 /* 1. 사칙연산 */
 #define ADD_OP 101

@@ -23,6 +23,16 @@ T_OBJ pop(c_STACK* stack) {
 }
 
 void push(c_STACK* stack, T_OBJ* obj) {
-	insert_list_node(stack->stack, obj);
+	LIST_NODE* new_node = (LIST_NODE*)malloc(sizeof(LIST_NODE));
+	new_node->value = *obj;
+	new_node->next = NULL;
+	if (stack->stack_size == 0) {	//크기가 0일 경우
+		stack->stack->head = new_node;
+	}
+	else {
+		new_node->next = stack->stack->head;
+		stack->stack->head = new_node;
+	}
+	stack->stack_size++;
 	return;
 }
