@@ -38,6 +38,10 @@ int lookup(char ch) {
 		addChar();
 		nextToken = SQUOTE;
 		break;
+	case '\"':
+		addChar();
+		nextToken = DQUOTE;
+		break;
 	case ';':
 		addChar();
 		nextToken = SEMI_COLON;
