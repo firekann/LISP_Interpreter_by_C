@@ -3,7 +3,7 @@
 
 /* Token codes */
 
-/* Å¸ÀÔÃß·ÐÀ» À§ÇÑ Á¤ÀÇ */
+/* Å¸ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 /*
 #define T_NIL 1001
 #define T_CODE 1002
@@ -14,13 +14,13 @@
 #define T_SYMBOL 1007
 */
 
-/* 1. »çÄ¢¿¬»ê */
+/* 1. ï¿½ï¿½Ä¢ï¿½ï¿½ï¿½ï¿½ */
 #define ADD_OP 101
 #define SUB_OP 102
 #define MULT_OP 103
 #define DIV_OP 104
 
-/* 2. ±âº»ÇÔ¼ö*/
+/* 2. ï¿½âº»ï¿½Ô¼ï¿½*/
 #define SETQ 200
 #define LIST 201
 #define CAR 202
@@ -35,9 +35,9 @@
 #define REMOVE 211
 #define SUBST 212
 
-/* 3. Predicate ÇÔ¼ö */
+/* 3. Predicate ï¿½Ô¼ï¿½ */
 #define ATOM 301
-#define L_NULL 302	//lispÀÇ NULLÀº µû·Î Ã³¸® NULLÀº ÀÌ¹Ì defineµÇ¾îÀÖÀ½
+#define L_NULL 302	//lispï¿½ï¿½ NULLï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ NULLï¿½ï¿½ ï¿½Ì¹ï¿½ defineï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½
 #define NUMBERP 303
 #define ZEROP 304
 #define MINUSP 305
@@ -48,7 +48,7 @@
 #define LEFT_INEQUAL_SAME_SIGN 310
 #define STRINGP 311
 
-/* 4. Á¶°Ç¹® */
+/* 4. ï¿½ï¿½ï¿½Ç¹ï¿½ */
 #define IF 401
 #define COND 402
 
@@ -63,6 +63,9 @@
 #define SEMI_COLON 508
 #define SHARP 509
 #define STRING 510
+
+#define true 1
+#define false 0
 
 typedef struct T_OBJ* P_OBJ;
 typedef struct {
