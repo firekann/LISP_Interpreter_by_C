@@ -1,6 +1,7 @@
 #ifndef _LEXER_
 #define _LEXER_
 #include <stdio.h>
+#include <stdlib.h>
 #include "c_list.h"
 #include "c_dictionary.h"
 
