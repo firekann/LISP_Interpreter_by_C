@@ -21,8 +21,24 @@ int lookup(char ch) {
 		nextToken = ADD_OP;
 		break;
 	case '-':
-		addChar();
-		nextToken = SUB_OP;
+		if (command[cursor] >= 48 && command[cursor] <= 57){
+			minusFlag = 1;
+			//nextChar = command[cursor];
+			//charClass = DIGIT;
+			//lexeme[0] = '-';//lexlen이 증가하지 않음. 특수처리 필요
+			getChar();
+			nextToken = lex();
+			char tempLexeme[MAX_LEXEME_LEN];
+			/*tempLexeme[0] = '-';
+			for (int i = 1; i < lexLen + 1; i++){
+				tempLexeme[i] = lexeme[i - 1];
+			}
+			strcpy(lexeme, tempLexeme);*/
+		}
+		else{
+			addChar();
+			nextToken = SUB_OP;
+		}
 		break;
 	case '*':
 		addChar();
@@ -277,6 +293,20 @@ int lex() {
 		break;
 	} /* End of switch */
 
+	if (minusFlag){
+		char tempLexeme[MAX_LEXEME_LEN];
+		int tempToken = nextToken;
+		tempLexeme[0] = '-';
+
+		for (int i = 1; i < lexLen + 1; i++){
+			tempLexeme[i] = lexeme[i - 1];
+		}
+
+		strcpy(lexeme, tempLexeme);
+		lexeme[lexLen + 1] = '\0';
+		minusFlag = 0;
+		nextToken = tempToken;
+	}
 
 	T_OBJ tmp_obj = create_obj();
 	insert_list_node(obj_list, &tmp_obj);
@@ -300,7 +330,7 @@ T_OBJ create_obj() {
 		tmp.t_int = atoi(lexeme);
 	}
 	else if (nextToken == FLOAT) {
-		tmp.t_float = atof(lexeme);
+		tmp.t_float = atof(lexeme);		
 	}
 	tmp.lexed_len = lexLen;
 	tmp.t_string = (char*)malloc(sizeof(char)*(lexLen + 1));

@@ -2,6 +2,7 @@
 #define _LEXER_
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "c_list.h"
 #include "c_dictionary.h"
 
@@ -21,6 +22,7 @@ int lexLen;
 int token;
 int commandLen;
 int cursor;
+int minusFlag;
 char command[MAX_COMMAND_LEN];
 c_LIST* obj_list;
 c_DICT* dict;
