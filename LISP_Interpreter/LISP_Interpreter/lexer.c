@@ -1,5 +1,6 @@
 ﻿#include "lexer.h"
 #include "type.h"
+#include <stdlib.h>
 #include <stdbool.h>
 
 /******************************************
