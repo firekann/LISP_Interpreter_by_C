@@ -15,6 +15,6 @@ int fn_numberp(c_DICT *dict, c_LIST *list);
 int fn_zerop(c_DICT *dict, c_LIST *list);
 int fn_minusp(c_DICT *dict, c_LIST *list);
 int fn_equal(c_DICT *dict, c_LIST *list);
-
+int fn_right_inequal(c_DICT *dict, c_LIST *list);
 
 #endif

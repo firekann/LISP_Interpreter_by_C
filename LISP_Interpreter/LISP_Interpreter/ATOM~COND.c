@@ -95,6 +95,8 @@ int fn_null(c_DICT *dict, c_LIST *list){ // NULL function
 		else
 			return false;
 	}
+	else
+		return false;
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
@@ -140,6 +142,8 @@ int fn_numberp(c_DICT *dict, c_LIST *list){
 		else
 			return false;
 	}
+	else
+		return false;
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
@@ -202,6 +206,8 @@ int fn_zerop(c_DICT *dict, c_LIST *list){
 		else
 			return false;
 	}
+	else
+		return false;
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
@@ -278,10 +284,14 @@ int fn_minusp(c_DICT *dict, c_LIST *list){
 				else
 					return false;
 			}
+			else
+				return false;
 		}
 		else
 			return false;
 	}
+	else 
+		return false;
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
@@ -311,57 +321,107 @@ int fn_equal(c_DICT *dict, c_LIST *list){
 	else
 		return false;
 
+	int beforeType;
+	int intValue;
+	float floatValue;
+	
 	int currentType = temp->value.type;
-	if (currentType == INT || currentType == FLOAT){ // if type is SUB_OP
-		temp = temp->next;
-		currentType = temp->value.type;
-		if (currentType == INT){ // if type is INT
-			if (temp->value.t_int != 0) // value is 0
-				temp = temp->next;
-			else
-				return false;
-		}
-		else if (currentType == FLOAT){ // if type is FLOAT		
-			if (temp->value.t_float != 0)
-				//if (ABS(0 - atof(temp->value.t_string) < epsilon)) // value is 0
-				temp = temp->next;
-			else
-				return false;
-		}
-	}
-	/*
+
+	// first attribute
 	if (currentType == INT){ // if type is INT
-	if (temp->value.t_int < 0) // value is 0
-	temp = temp->next;
-	else
-	return false;
+		beforeType = currentType;
+		intValue = temp->value.t_int;
+		temp = temp->next;
 	}
 	else if (currentType == FLOAT){ // if type is FLOAT
-	if (temp->value.t_float < 0)
-	//if (ABS(0 - atof(temp->value.t_string) < epsilon)) // value is 0
-	temp = temp->next;
-	else
-	return false;
-	}*/
-	else if (currentType == IDENT){ // if type is FLOAT		
+		beforeType = currentType;
+		floatValue = temp->value.t_float;
+		temp = temp->next;
+	}
+	else if (currentType == NIL){ // if type is NIL
+		beforeType = currentType;
+		temp = temp->next;
+	}	
+	else if (currentType == IDENT){ // if type is IDENT	
 		if (has_dict_key(dict, &(temp->value.t_string))){
 			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
 			if (data.type == INT){ // if type is INT
-				if (data.t_int < 0) // value is 0
-					temp = temp->next;
-				else
-					return false;
+				beforeType = currentType;
+				intValue = data.t_int;
+				temp = temp->next;
 			}
 			else if (data.type == FLOAT){ // if type is FLOAT
-				if (data.t_float < 0) // value is 0
-					temp = temp->next;
-				else
-					return false;
+				beforeType = currentType;
+				floatValue = data.t_float;
+				temp = temp->next;
 			}
+			else if (currentType == NIL){ // if type is NIL
+				beforeType = currentType;
+				temp = temp->next;
+			}
+			else
+				return false;
 		}
 		else
 			return false;
 	}
+	else
+		return false;
+
+	currentType = temp->value.type;
+
+	// second attribute
+	if (currentType == INT){ // if type is INT
+		if (beforeType == currentType && intValue == temp->value.t_int){
+			temp = temp->next;
+		}
+		else
+			return false;
+	}
+	else if (currentType == FLOAT){ // if type is FLOAT
+		if (beforeType == currentType && floatValue == temp->value.t_float){
+			temp = temp->next;
+		}
+		else
+			return false;
+	}
+	else if (currentType == NIL){ // if type is NIL
+		if (beforeType == currentType)
+			temp = temp->next;
+		else
+			return false;
+	}
+	else if (currentType == IDENT){ // if type is IDENT	
+		if (has_dict_key(dict, &(temp->value.t_string))){
+			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			if (currentType == INT){ // if type is INT
+				if (beforeType == currentType && intValue == data.t_int){
+					temp = temp->next;
+				}
+				else
+					return false;
+			}
+			else if (currentType == FLOAT){ // if type is FLOAT
+				if (beforeType == currentType && floatValue == data.t_float){
+					temp = temp->next;
+				}
+				else
+					return false;
+			}
+			else if (currentType == NIL){ // if type is NIL
+				if (beforeType == currentType)
+					temp = temp->next;
+				else
+					return false;
+			}
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
@@ -373,3 +433,137 @@ int fn_equal(c_DICT *dict, c_LIST *list){
 	return false;
 }
 
+int fn_right_inequal(c_DICT *dict, c_LIST *list){
+	LIST_NODE *temp = list->head;
+
+	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		temp = temp->next;
+	}
+	else
+		return false;
+
+	if (temp->value.type == RIGHT_INEQUAL_SIGN){ // check instruction EQUAL
+		if (!strcmp(temp->value.t_string, "<"))
+			temp = temp->next;
+		else
+			return false;
+	}
+	else
+		return false;
+
+	int currentType = temp->value.type;
+	int beforeType;
+	int intValue;
+	float floatValue;
+
+	// first attribute
+	if (currentType == INT){
+		beforeType = currentType;
+		intValue = temp->value.t_int;
+		temp = temp->next;
+	}
+	else if (currentType == FLOAT){ // if type is FLOAT
+		beforeType = currentType;
+		intValue = temp->value.t_float;
+		temp = temp->next;
+	}
+	else if (currentType == IDENT){ // if type is IDENT	
+		if (has_dict_key(dict, &(temp->value.t_string))){
+			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			if (data.type == INT){ // if type is INT
+				beforeType = currentType;
+				intValue = data.t_int;
+				temp = temp->next;
+			}
+			else if (data.type == FLOAT){ // if type is FLOAT
+				beforeType = currentType;
+				floatValue = data.t_float;
+				temp = temp->next;
+			}
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+
+	currentType = temp->value.type;
+
+	// second attribute
+	if (currentType == INT){
+		if (beforeType == INT){
+			if (intValue < temp->value.t_int)
+				temp = temp->next;
+			else
+				return false;
+		}
+		else if (beforeType == FLOAT){
+			if (floatValue < temp->value.t_int)
+				temp = temp->next;
+			else
+				return false;
+		}
+	}
+	else if (currentType == FLOAT){ // if type is FLOAT
+		if (beforeType == INT){
+			if (intValue < temp->value.t_float)
+				temp = temp->next;
+			else
+				return false;
+		}
+		else if (beforeType == FLOAT){
+			if (floatValue < temp->value.t_float)
+				temp = temp->next;
+			else
+				return false;
+		}
+	}
+	else if (currentType == IDENT){ // if type is IDENT	
+		if (has_dict_key(dict, &(temp->value.t_string))){
+			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			if (currentType == INT){
+				if (beforeType == INT){
+					if (intValue < data.t_int)
+						temp = temp->next;
+					else
+						return false;
+				}
+				else if (beforeType == FLOAT){
+					if (floatValue < data.t_int)
+						temp = temp->next;
+					else
+						return false;
+				}
+			}
+			else if (currentType == FLOAT){ // if type is FLOAT
+				if (beforeType == INT){
+					if (intValue < data.t_float)
+						temp = temp->next;
+					else
+						return false;
+				}
+				else if (beforeType == FLOAT){
+					if (floatValue < data.t_float)
+						temp = temp->next;
+					else
+						return false;
+				}
+			}
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+
+	currentType = temp->value.type;
+	if (currentType == RIGHT_PAREN){ // end of instruction
+		temp = temp->next;
+		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+	}
+
+	return false;
+}
