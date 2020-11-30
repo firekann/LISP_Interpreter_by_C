@@ -23,17 +23,10 @@ int lookup(char ch) {
 	case '-':
 		if (command[cursor] >= 48 && command[cursor] <= 57){
 			minusFlag = 1;
-			//nextChar = command[cursor];
-			//charClass = DIGIT;
-			//lexeme[0] = '-';//lexlen이 증가하지 않음. 특수처리 필요
 			getChar();
-			nextToken = lex();
-			char tempLexeme[MAX_LEXEME_LEN];
-			/*tempLexeme[0] = '-';
-			for (int i = 1; i < lexLen + 1; i++){
-				tempLexeme[i] = lexeme[i - 1];
-			}
-			strcpy(lexeme, tempLexeme);*/
+			lex();
+			if (command[cursor - 1] != lexeme[lexLen])
+				cursor--;
 		}
 		else{
 			addChar();
@@ -307,12 +300,13 @@ int lex() {
 		minusFlag = 0;
 		nextToken = tempToken;
 	}
+	else{
+		T_OBJ tmp_obj = create_obj();
+		insert_list_node(obj_list, &tmp_obj);
 
-	T_OBJ tmp_obj = create_obj();
-	insert_list_node(obj_list, &tmp_obj);
-
-	printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
-
+		printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
+	}
+	
 	/* print to code.out file */
 	// fprintf(out_fp, "Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
 
