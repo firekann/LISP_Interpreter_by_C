@@ -63,6 +63,7 @@
 #define SEMI_COLON 508
 #define SHARP 509
 #define STRING 510
+#define NIL 511
 
 #define true 1
 #define false 0

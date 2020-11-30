@@ -197,6 +197,8 @@ int lex() {
 			nextToken = IF;
 		else if (!strcmp("COND", lexeme))
 			nextToken = COND;
+		else if (!strcmp("NIL", lexeme))
+			nextToken = NIL;
 		/*혼합형 처리*/
 		else if (lexeme[0] == 'C') {
 			int *tmp_arr = (int*)malloc(sizeof(int) * (lexLen - 2));
