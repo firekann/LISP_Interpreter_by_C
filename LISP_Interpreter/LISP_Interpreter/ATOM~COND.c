@@ -5,10 +5,9 @@
 #include <string.h>
 #include "c_dictionary.h"
 
-int fn_atom(c_DICT *dict, c_LIST *list){ // ATOM function
-	LIST_NODE *temp = list->head;
-
+int fn_atom(c_DICT *dict, LIST_NODE *temp){ // ATOM function
 	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
 		temp = temp->next;
 	}
 	else
@@ -38,9 +37,12 @@ int fn_atom(c_DICT *dict, c_LIST *list){ // ATOM function
 	else if (currentType == DQUOTE){ // if current type is double quote
 		temp = temp->next;
 		currentType = temp->value.type;
-		while (currentType == INT || currentType == FLOAT || currentType == IDENT || currentType == NIL){ // check whether it is symbol
+		//while (currentType == INT || currentType == FLOAT || currentType == IDENT || currentType == NIL){ // check whether it is symbol
+		while (currentType != DQUOTE){ // loop until meet the next double quote
 			temp = temp->next;
 			currentType = temp->value.type;
+			if (currentType == EOF)
+				return false;
 		}
 		if (currentType == DQUOTE){ // check whether it is dquote
 			temp = temp->next;
@@ -53,18 +55,20 @@ int fn_atom(c_DICT *dict, c_LIST *list){ // ATOM function
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
 		temp = temp->next;
 		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
 			return true;
 	}
 
 	return false;
 }
 
-int fn_null(c_DICT *dict, c_LIST *list){ // NULL function
-	LIST_NODE *temp = list->head;
-
+int fn_null(c_DICT *dict, LIST_NODE *temp){ // NULL function
 	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
 		temp = temp->next;
 	}
 	else
@@ -100,18 +104,20 @@ int fn_null(c_DICT *dict, c_LIST *list){ // NULL function
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
 		temp = temp->next;
 		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
 			return true;
 	}
 
 	return false;
 }
 
-int fn_numberp(c_DICT *dict, c_LIST *list){
-	LIST_NODE *temp = list->head;
-
+int fn_numberp(c_DICT *dict, LIST_NODE *temp){
 	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
 		temp = temp->next;
 	}
 	else
@@ -147,18 +153,20 @@ int fn_numberp(c_DICT *dict, c_LIST *list){
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
 		temp = temp->next;
 		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
 			return true;
 	}
 
 	return false;
 }
 
-int fn_zerop(c_DICT *dict, c_LIST *list){
-	LIST_NODE *temp = list->head;
-
+int fn_zerop(c_DICT *dict, LIST_NODE *temp){
 	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
 		temp = temp->next;
 	}
 	else
@@ -211,18 +219,20 @@ int fn_zerop(c_DICT *dict, c_LIST *list){
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
 		temp = temp->next;
 		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
 			return true;
 	}
 
 	return false;
 }
 
-int fn_minusp(c_DICT *dict, c_LIST *list){
-	LIST_NODE *temp = list->head;
-
+int fn_minusp(c_DICT *dict, LIST_NODE *temp){
 	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
 		temp = temp->next;
 	}
 	else
@@ -295,18 +305,20 @@ int fn_minusp(c_DICT *dict, c_LIST *list){
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
 		temp = temp->next;
 		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
 			return true;
 	}
 
 	return false;
 }
 
-int fn_equal(c_DICT *dict, c_LIST *list){
-	LIST_NODE *temp = list->head;
-
+int fn_equal(c_DICT *dict, LIST_NODE *temp){
 	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
 		temp = temp->next;
 	}
 	else
@@ -345,12 +357,13 @@ int fn_equal(c_DICT *dict, c_LIST *list){
 	else if (currentType == IDENT){ // if type is IDENT	
 		if (has_dict_key(dict, &(temp->value.t_string))){
 			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
-			if (data.type == INT){ // if type is INT
+			currentType = data.type;
+			if (currentType == INT){ // if type is INT
 				beforeType = currentType;
 				intValue = data.t_int;
 				temp = temp->next;
 			}
-			else if (data.type == FLOAT){ // if type is FLOAT
+			else if (currentType == FLOAT){ // if type is FLOAT
 				beforeType = currentType;
 				floatValue = data.t_float;
 				temp = temp->next;
@@ -394,6 +407,7 @@ int fn_equal(c_DICT *dict, c_LIST *list){
 	else if (currentType == IDENT){ // if type is IDENT	
 		if (has_dict_key(dict, &(temp->value.t_string))){
 			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			currentType = data.type;
 			if (currentType == INT){ // if type is INT
 				if (beforeType == currentType && intValue == data.t_int){
 					temp = temp->next;
@@ -425,24 +439,165 @@ int fn_equal(c_DICT *dict, c_LIST *list){
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
 		temp = temp->next;
 		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
 			return true;
 	}
 
 	return false;
 }
 
-int fn_right_inequal(c_DICT *dict, c_LIST *list){
-	LIST_NODE *temp = list->head;
-
+int fn_left_inequal(c_DICT *dict, LIST_NODE *temp){
 	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
 		temp = temp->next;
 	}
 	else
 		return false;
 
-	if (temp->value.type == RIGHT_INEQUAL_SIGN){ // check instruction EQUAL
+	if (temp->value.type == LEFT_INEQUAL_SIGN){ // check instruction LEFT_INEQUAL_SIGN
+		if (!strcmp(temp->value.t_string, ">"))
+			temp = temp->next;
+		else
+			return false;
+	}
+	else
+		return false;
+
+	int currentType = temp->value.type;
+	int beforeType;
+	int intValue;
+	float floatValue;
+
+	// first attribute
+	if (currentType == INT){
+		beforeType = currentType;
+		intValue = temp->value.t_int;
+		temp = temp->next;
+	}
+	else if (currentType == FLOAT){ // if type is FLOAT
+		beforeType = currentType;
+		floatValue = temp->value.t_float;
+		temp = temp->next;
+	}
+	else if (currentType == IDENT){ // if type is IDENT	
+		if (has_dict_key(dict, &(temp->value.t_string))){
+			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			currentType = data.type;
+			if (currentType == INT){ // if type is INT
+				beforeType = currentType;
+				intValue = data.t_int;
+				temp = temp->next;
+			}
+			else if (currentType == FLOAT){ // if type is FLOAT
+				beforeType = currentType;
+				floatValue = data.t_float;
+				temp = temp->next;
+			}
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+
+	currentType = temp->value.type;
+
+	// second attribute
+	if (currentType == INT){
+		if (beforeType == INT){
+			if (intValue > temp->value.t_int)
+				temp = temp->next;
+			else
+				return false;
+		}
+		else if (beforeType == FLOAT){
+			if (floatValue > temp->value.t_int)
+				temp = temp->next;
+			else
+				return false;
+		}
+	}
+	else if (currentType == FLOAT){ // if type is FLOAT
+		if (beforeType == INT){
+			if (intValue > temp->value.t_float)
+				temp = temp->next;
+			else
+				return false;
+		}
+		else if (beforeType == FLOAT){
+			if (floatValue > temp->value.t_float)
+				temp = temp->next;
+			else
+				return false;
+		}
+	}
+	else if (currentType == IDENT){ // if type is IDENT	
+		if (has_dict_key(dict, &(temp->value.t_string))){
+			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			currentType = data.type;
+			if (currentType == INT){
+				if (beforeType == INT){
+					if (intValue > data.t_int)
+						temp = temp->next;
+					else
+						return false;
+				}
+				else if (beforeType == FLOAT){
+					if (floatValue > data.t_int)
+						temp = temp->next;
+					else
+						return false;
+				}
+			}
+			else if (currentType == FLOAT){ // if type is FLOAT
+				if (beforeType == INT){
+					if (intValue > data.t_float)
+						temp = temp->next;
+					else
+						return false;
+				}
+				else if (beforeType == FLOAT){
+					if (floatValue > data.t_float)
+						temp = temp->next;
+					else
+						return false;
+				}
+			}
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+
+	currentType = temp->value.type;
+	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
+		temp = temp->next;
+		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
+			return true;
+	}
+
+	return false;
+}
+
+int fn_right_inequal(c_DICT *dict, LIST_NODE *temp){
+	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
+		temp = temp->next;
+	}
+	else
+		return false;
+
+	if (temp->value.type == RIGHT_INEQUAL_SIGN){ // check instruction RIGHT_INEQUAL_SIGN
 		if (!strcmp(temp->value.t_string, "<"))
 			temp = temp->next;
 		else
@@ -464,18 +619,19 @@ int fn_right_inequal(c_DICT *dict, c_LIST *list){
 	}
 	else if (currentType == FLOAT){ // if type is FLOAT
 		beforeType = currentType;
-		intValue = temp->value.t_float;
+		floatValue = temp->value.t_float;
 		temp = temp->next;
 	}
 	else if (currentType == IDENT){ // if type is IDENT	
 		if (has_dict_key(dict, &(temp->value.t_string))){
 			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
-			if (data.type == INT){ // if type is INT
+			currentType = data.type;
+			if (currentType == INT){ // if type is INT
 				beforeType = currentType;
 				intValue = data.t_int;
 				temp = temp->next;
 			}
-			else if (data.type == FLOAT){ // if type is FLOAT
+			else if (currentType == FLOAT){ // if type is FLOAT
 				beforeType = currentType;
 				floatValue = data.t_float;
 				temp = temp->next;
@@ -521,6 +677,7 @@ int fn_right_inequal(c_DICT *dict, c_LIST *list){
 	else if (currentType == IDENT){ // if type is IDENT	
 		if (has_dict_key(dict, &(temp->value.t_string))){
 			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			currentType = data.type;
 			if (currentType == INT){
 				if (beforeType == INT){
 					if (intValue < data.t_int)
@@ -560,8 +717,445 @@ int fn_right_inequal(c_DICT *dict, c_LIST *list){
 
 	currentType = temp->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
 		temp = temp->next;
 		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
+			return true;
+	}
+
+	return false;
+}
+
+int fn_left_inequal_same(c_DICT *dict, LIST_NODE *temp){
+	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
+		temp = temp->next;
+	}
+	else
+		return false;
+
+	if (temp->value.type == LEFT_INEQUAL_SAME_SIGN){ // check instruction LEFT_INEQUAL_SAME_SIGN
+		if (!strcmp(temp->value.t_string, ">="))
+			temp = temp->next;
+		else
+			return false;
+	}
+	else
+		return false;
+
+	int currentType = temp->value.type;
+	int beforeType;
+	int intValue;
+	float floatValue;
+
+	// first attribute
+	if (currentType == INT){
+		beforeType = currentType;
+		intValue = temp->value.t_int;
+		temp = temp->next;
+	}
+	else if (currentType == FLOAT){ // if type is FLOAT
+		beforeType = currentType;
+		floatValue = temp->value.t_float;
+		temp = temp->next;
+	}
+	else if (currentType == IDENT){ // if type is IDENT	
+		if (has_dict_key(dict, &(temp->value.t_string))){
+			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			currentType = data.type;
+			if (currentType  == INT){ // if type is INT
+				beforeType = currentType;
+				intValue = data.t_int;
+				temp = temp->next;
+			}
+			else if (currentType == FLOAT){ // if type is FLOAT
+				beforeType = currentType;
+				floatValue = data.t_float;
+				temp = temp->next;
+			}
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+
+	currentType = temp->value.type;
+
+	// second attribute
+	if (currentType == INT){
+		if (beforeType == INT){
+			if (intValue >= temp->value.t_int)
+				temp = temp->next;
+			else
+				return false;
+		}
+		else if (beforeType == FLOAT){
+			if (floatValue >= temp->value.t_int)
+				temp = temp->next;
+			else
+				return false;
+		}
+	}
+	else if (currentType == FLOAT){ // if type is FLOAT
+		if (beforeType == INT){
+			if (intValue >= temp->value.t_float)
+				temp = temp->next;
+			else
+				return false;
+		}
+		else if (beforeType == FLOAT){
+			if (floatValue >= temp->value.t_float)
+				temp = temp->next;
+			else
+				return false;
+		}
+	}
+	else if (currentType == IDENT){ // if type is IDENT	
+		if (has_dict_key(dict, &(temp->value.t_string))){
+			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			currentType = data.type;
+			if (currentType == INT){
+				if (beforeType == INT){
+					if (intValue >= data.t_int)
+						temp = temp->next;
+					else
+						return false;
+				}
+				else if (beforeType == FLOAT){
+					if (floatValue >= data.t_int)
+						temp = temp->next;
+					else
+						return false;
+				}
+			}
+			else if (currentType == FLOAT){ // if type is FLOAT
+				if (beforeType == INT){
+					if (intValue >= data.t_float)
+						temp = temp->next;
+					else
+						return false;
+				}
+				else if (beforeType == FLOAT){
+					if (floatValue >= data.t_float)
+						temp = temp->next;
+					else
+						return false;
+				}
+			}
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+
+	currentType = temp->value.type;
+	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
+		temp = temp->next;
+		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
+			return true;
+	}
+
+	return false;
+}
+
+int fn_right_inequal_same(c_DICT *dict, LIST_NODE *temp){
+	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
+		temp = temp->next;
+	}
+	else
+		return false;
+
+	if (temp->value.type == RIGHT_INEQUAL_SAME_SIGN){ // check instruction RIGHT_INEQUAL_SAME_SIGN
+		if (!strcmp(temp->value.t_string, "<="))
+			temp = temp->next;
+		else
+			return false;
+	}
+	else
+		return false;
+
+	int currentType = temp->value.type;
+	int beforeType;
+	int intValue;
+	float floatValue;
+
+	// first attribute
+	if (currentType == INT){
+		beforeType = currentType;
+		intValue = temp->value.t_int;
+		temp = temp->next;
+	}
+	else if (currentType == FLOAT){ // if type is FLOAT
+		beforeType = currentType;
+		floatValue = temp->value.t_float;
+		temp = temp->next;
+	}
+	else if (currentType == IDENT){ // if type is IDENT	
+		if (has_dict_key(dict, &(temp->value.t_string))){
+			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			currentType = data.type;
+			if (currentType == INT){ // if type is INT
+				beforeType = currentType;
+				intValue = data.t_int;
+				temp = temp->next;
+			}
+			else if (currentType == FLOAT){ // if type is FLOAT
+				beforeType = currentType;
+				floatValue = data.t_float;
+				temp = temp->next;
+			}
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+
+	currentType = temp->value.type;
+
+	// second attribute
+	if (currentType == INT){
+		if (beforeType == INT){
+			if (intValue <= temp->value.t_int)
+				temp = temp->next;
+			else
+				return false;
+		}
+		else if (beforeType == FLOAT){
+			if (floatValue <= temp->value.t_int)
+				temp = temp->next;
+			else
+				return false;
+		}
+	}
+	else if (currentType == FLOAT){ // if type is FLOAT
+		if (beforeType == INT){
+			if (intValue <= temp->value.t_float)
+				temp = temp->next;
+			else
+				return false;
+		}
+		else if (beforeType == FLOAT){
+			if (floatValue <= temp->value.t_float)
+				temp = temp->next;
+			else
+				return false;
+		}
+	}
+	else if (currentType == IDENT){ // if type is IDENT	
+		if (has_dict_key(dict, &(temp->value.t_string))){
+			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			currentType = data.type;
+			if (currentType == INT){
+				if (beforeType == INT){
+					if (intValue <= data.t_int)
+						temp = temp->next;
+					else
+						return false;
+				}
+				else if (beforeType == FLOAT){
+					if (floatValue <= data.t_int)
+						temp = temp->next;
+					else
+						return false;
+				}
+			}
+			else if (currentType == FLOAT){ // if type is FLOAT
+				if (beforeType == INT){
+					if (intValue <= data.t_float)
+						temp = temp->next;
+					else
+						return false;
+				}
+				else if (beforeType == FLOAT){
+					if (floatValue <= data.t_float)
+						temp = temp->next;
+					else
+						return false;
+				}
+			}
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+
+	currentType = temp->value.type;
+	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
+		temp = temp->next;
+		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
+			return true;
+	}
+
+	return false;
+}
+
+int fn_stringp(c_DICT *dict, LIST_NODE *temp){
+	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
+		temp = temp->next;
+	}
+	else
+		return false;
+
+	if (temp->value.type == STRINGP){ // check instruction STRINGP
+		temp = temp->next;
+	}
+	else
+		return false;
+
+	int currentType = temp->value.type;
+
+	if (currentType == DQUOTE){ // if current type is double quote
+		temp = temp->next;
+		currentType = temp->value.type;
+		while (currentType != DQUOTE){ // loop until meet the next double quote
+			temp = temp->next;
+			currentType = temp->value.type;
+			if (currentType == EOF)
+				return false;
+		}
+
+		if (currentType == DQUOTE){ // check whether it is double quote
+			temp = temp->next;
+		}
+		else
+			return false;
+	}
+	else if (currentType == IDENT){
+		if (has_dict_key(dict, &(temp->value.t_string))){
+			T_OBJ data = get_dict_obj(dict, &(temp->value.t_string));
+			currentType = data.type;
+			if (currentType == DQUOTE){ // if current type is double quote
+				temp = temp->next;
+				currentType = temp->value.type;
+				while (currentType != DQUOTE){ // loop until meet the next double quote
+					temp = temp->next;
+					currentType = temp->value.type;
+					if (currentType == EOF)
+						return false;
+				}
+
+				if (currentType == DQUOTE){ // check whether it is double quote
+					temp = temp->next;
+				}
+				else
+					return false;
+			}
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+
+	currentType = temp->value.type;
+	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
+		temp = temp->next;
+		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
+			return true;
+	}
+
+	return false;
+}
+
+int fn_if(c_DICT *dict, LIST_NODE *temp){
+	ifFlag = 1;
+	if (temp->value.type == LEFT_PAREN){ // check left paren existence
+		parenCount++;
+		temp = temp->next;
+	}
+	else
+		return false;
+
+	if (temp->value.type == IF){ // check instruction IF
+		temp = temp->next;
+	}
+	else
+		return false;
+
+	int currentType = temp->value.type;
+	LIST_NODE *nextNode = temp->next;
+	int condition = 0;
+
+	if (nextNode->value.type == ATOM){ // check left paren existence
+		condition = fn_atom(dict, temp);
+		if (currentType == LEFT_PAREN){
+			parenCount++;
+		}
+		while (parenCount != 1){
+			temp = temp->next;
+			currentType = temp->value.type;
+			if (currentType == RIGHT_PAREN)
+				parenCount--;
+		}
+		if (!condition){
+			return false;
+		}
+	}
+	else if (currentType == IDENT){}
+	//////////////// other option's can be done after function merge
+	else
+		return false;
+
+	temp = temp->next;
+	currentType = temp->value.type;
+	if (condition == true){
+		nextNode = temp->next;
+		condition = 0;
+
+		if (nextNode->value.type == ATOM){ // check left paren existence
+			condition = fn_atom(dict, temp);
+			if (currentType == LEFT_PAREN){
+				parenCount++;
+			}
+			while (parenCount != 1){
+				temp = temp->next;
+				currentType = temp->value.type;
+				if (currentType == RIGHT_PAREN)
+					parenCount--;
+			}
+			if (!condition){
+				return false;
+			}
+		}
+		else if (currentType == IDENT){}
+		//////////////// other option's can be done after function merge
+		else
+			return false;
+	}
+
+	else if (condition == false){
+
+	}
+
+
+	currentType = temp->value.type;
+	if (currentType == RIGHT_PAREN){ // end of instruction
+		parenCount--;
+		temp = temp->next;
+		if (temp->value.type == EOF || temp->value.type == SEMI_COLON)
+			return true;
+		if (ifFlag)
 			return true;
 	}
 

@@ -22,7 +22,9 @@ int lexLen;
 int token;
 int commandLen;
 int cursor;
-int minusFlag;
+int minusFlag; // to distinguish minus and negative num
+int ifFlag; // to notice whether it is if function
+int parenCount; // to count left paren and right paren
 char command[MAX_COMMAND_LEN];
 c_LIST* obj_list;
 c_DICT* dict;

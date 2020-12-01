@@ -38,6 +38,7 @@ int main()
 			printf("Next token is: %d, Next lexeme is %s\n", node->value.type, node->value.t_string);
 			node = node->next;
 		}
+		ifFlag = 0;
 		free_list(obj_list);
 	}
 	free_dict(dict);
