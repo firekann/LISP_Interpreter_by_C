@@ -1108,9 +1108,6 @@ int fn_if(c_DICT *dict, LIST_NODE *temp){
 			if (currentType == RIGHT_PAREN)
 				parenCount--;
 		}
-		if (!condition){
-			return false;
-		}
 	}
 	else if (currentType == IDENT){}
 	//////////////// other option's can be done after function merge
@@ -1119,8 +1116,8 @@ int fn_if(c_DICT *dict, LIST_NODE *temp){
 
 	temp = temp->next;
 	currentType = temp->value.type;
+	nextNode = temp->next;
 	if (condition == true){
-		nextNode = temp->next;
 		condition = 0;
 
 		if (nextNode->value.type == ATOM){ // check left paren existence
@@ -1145,7 +1142,38 @@ int fn_if(c_DICT *dict, LIST_NODE *temp){
 	}
 
 	else if (condition == false){
+		if (currentType == LEFT_PAREN){
+			parenCount++;
+		}
+		while (parenCount != 1){
+			temp = temp->next;
+			currentType = temp->value.type;
+			if (currentType == RIGHT_PAREN)
+				parenCount--;
+		}
 
+		temp = temp->next;
+		currentType = temp->value.type;
+		nextNode = temp->next;
+		if (nextNode->value.type == ATOM){ // check left paren existence
+			condition = fn_atom(dict, temp);
+			if (currentType == LEFT_PAREN){
+				parenCount++;
+			}
+			while (parenCount != 1){
+				temp = temp->next;
+				currentType = temp->value.type;
+				if (currentType == RIGHT_PAREN)
+					parenCount--;
+			}
+			if (!condition){
+				return false;
+			}
+		}
+		else if (currentType == IDENT){}
+		//////////////// other option's can be done after function merge
+		else
+			return false;
 	}
 
 
