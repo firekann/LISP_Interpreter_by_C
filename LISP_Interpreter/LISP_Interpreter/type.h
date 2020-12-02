@@ -1,6 +1,8 @@
 #ifndef _TYPE_
 #define _TYPE_
 
+#include <stdbool.h>
+
 /* Token codes */
 
 /* Ÿ���߷��� ���� ���� */
@@ -65,6 +67,7 @@
 #define STRING 510
 #define NIL 511
 #define LIST 512
+#define BOOLEAN 513
 
 #define true 1
 #define false 0
@@ -76,6 +79,7 @@ typedef struct {
 	char* t_string;
 	int t_int;
 	float t_float;
+	bool t_bool;
 	P_OBJ t_list_value, next;
 }T_OBJ;
 
