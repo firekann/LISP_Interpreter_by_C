@@ -1,4 +1,5 @@
-﻿#include "lexer.h"
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include "lexer.h"
 #include "type.h"
 #include <stdbool.h>
 
@@ -48,8 +49,12 @@ int lookup(char ch) {
 		nextToken = SQUOTE;
 		break;
 	case '\"':
-		addChar();
-		nextToken = DQUOTE;
+		getChar();
+		while (nextChar != '\"') {
+			addChar();
+			getChar();
+		}
+		nextToken = STRING;
 		break;
 	case ';':
 		addChar();
