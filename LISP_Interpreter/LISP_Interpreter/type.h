@@ -64,6 +64,7 @@
 #define SHARP 509
 #define STRING 510
 #define NIL 511
+#define LIST 512
 
 #define true 1
 #define false 0

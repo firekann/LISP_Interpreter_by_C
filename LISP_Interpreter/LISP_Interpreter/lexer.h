@@ -27,6 +27,7 @@ int ifFlag; // to notice whether it is if function
 int parenCount; // to count left paren and right paren
 char command[MAX_COMMAND_LEN];
 c_LIST* obj_list;
+LIST_NODE* cur_node;
 c_DICT* dict;
 
 FILE *in_fp;

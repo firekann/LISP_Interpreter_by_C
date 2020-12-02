@@ -36,7 +36,7 @@ int lookup(char ch) {
 		break;
 	case '*':
 		addChar();
-		nextToken = MULT_OP;
+		nextToken = MUL_OP;
 		break;
 	case '/':
 		addChar();
