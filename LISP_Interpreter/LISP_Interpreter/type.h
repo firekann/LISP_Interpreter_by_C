@@ -17,7 +17,7 @@
 /* 1. ��Ģ���� */
 #define ADD_OP 101
 #define SUB_OP 102
-#define MULT_OP 103
+#define MUL_OP 103
 #define DIV_OP 104
 
 /* 2. �⺻�Լ�*/
