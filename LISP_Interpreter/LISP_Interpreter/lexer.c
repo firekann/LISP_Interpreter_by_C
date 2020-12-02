@@ -114,7 +114,6 @@ of input and determine its character class */
 void getChar() {
 	if (cursor < commandLen) {
 		nextChar = command[cursor++];
-		nextChar = toupper(nextChar);	//대소문자 구분안하는 것에대한 처리 : 모든 문자를 uppercase로 바꿔줌
 		if (isalpha(nextChar))
 			charClass = LETTER;
 		else if (isdigit(nextChar))
@@ -147,9 +146,11 @@ int lex() {
 	switch (charClass) {
 		/* Parse identifiers */
 	case LETTER:
+		nextChar = toupper(nextChar);	//대소문자 구분안하는 것에대한 처리 : 모든 문자를 uppercase로 바꿔줌
 		addChar();
 		getChar();
 		while (charClass == LETTER || charClass == DIGIT) {
+			nextChar = toupper(nextChar);	//대소문자 구분안하는 것에대한 처리 : 모든 문자를 uppercase로 바꿔줌
 			addChar();
 			getChar();
 		}
