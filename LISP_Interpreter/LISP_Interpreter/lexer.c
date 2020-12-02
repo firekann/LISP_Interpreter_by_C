@@ -49,11 +49,13 @@ int lookup(char ch) {
 		nextToken = SQUOTE;
 		break;
 	case '\"':
+		addChar();
 		getChar();
 		while (nextChar != '\"') {
 			addChar();
 			getChar();
 		}
+		addChar();
 		nextToken = STRING;
 		break;
 	case ';':
