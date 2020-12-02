@@ -21,6 +21,7 @@ int main()
 {
 	dict = initialize_dict();
 	while (1) {
+		left_paren_Count = right_paren_Count = 0;
 		obj_list = initialize_list();
 
 		printf("Enter the lisp line: ");

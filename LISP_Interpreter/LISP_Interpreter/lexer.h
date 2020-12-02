@@ -24,7 +24,8 @@ int commandLen;
 int cursor;
 int minusFlag; // to distinguish minus and negative num
 int ifFlag; // to notice whether it is if function
-int parenCount; // to count left paren and right paren
+int left_paren_Count; // to count left paren and right paren
+int right_paren_Count; // to count left paren and right paren
 char command[MAX_COMMAND_LEN];
 c_LIST* obj_list;
 LIST_NODE* cur_node;
