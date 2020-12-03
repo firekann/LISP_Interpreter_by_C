@@ -46,6 +46,7 @@ void insert_dict_node(c_DICT* dict, char* key, T_OBJ* obj) {
 	if (has_dict_key(dict, key)) {	//이미 존재하는 key일 경우 할당 해제하고 obj교체
 		DICT_NODE* pre_node = dict->head;
 		DICT_NODE* cur_node = pre_node;
+		int cnt = 0;
 		while (cur_node != NULL)
 		{
 			if (!strcmp(key, cur_node->key)) {
@@ -54,7 +55,7 @@ void insert_dict_node(c_DICT* dict, char* key, T_OBJ* obj) {
 				strcpy(new_node->key, key);
 				new_node->value = *obj;
 				new_node->next = cur_node->next;
-				if (dict->dict_size == 1) {
+				if (cnt == 0) {
 					dict->head = new_node;
 				}
 				else {
@@ -65,6 +66,7 @@ void insert_dict_node(c_DICT* dict, char* key, T_OBJ* obj) {
 			}
 			pre_node = cur_node;
 			cur_node = cur_node->next;
+			cnt++;
 		}
 		return;
 	}
