@@ -36,17 +36,19 @@ T_OBJ fn_add() {
 			is_ident = true;
 			T_OBJ tmp = get_dict_obj(dict, cur_node->value.t_string);
 			if (tmp.type == INT) {
-				sum = (float)cur_node->value.t_int;
+				type = INT;
+				sum = (float)tmp.t_int;
 			}
 			else if (tmp.type == FLOAT) {
-				sum = (float)cur_node->value.t_float;
+				type = FLOAT;
+				sum = (float)tmp.t_float;
 			}
 			else {
 				printf("ERROR : SYNTAX ERROR FOR ADD\n");
 				return;
 			}
-			key = (char*)malloc(sizeof(char)*tmp.lexed_len + 1);
-			strcpy(key, tmp.t_string);
+			key = (char*)malloc(sizeof(char)*cur_node->value.lexed_len + 1);
+			strcpy(key, cur_node->value.t_string);
 		}
 		else {
 			printf("ERROR : NOT ADD TYPE\n");
@@ -84,6 +86,7 @@ T_OBJ fn_add() {
 		insert_dict_node(dict, key, &tmp);
 		free(key);
 	}
+	printf("ADD : %s, type : %d\n", tmp.t_string, tmp.type);	//디버깅용
 	return tmp;
 }
 
@@ -132,17 +135,19 @@ T_OBJ fn_sub() {
 			is_ident = true;
 			T_OBJ tmp = get_dict_obj(dict, cur_node->value.t_string);
 			if (tmp.type == INT) {
-				sum = (float)cur_node->value.t_int;
+				type = INT;
+				sum = (float)tmp.t_int;
 			}
 			else if (tmp.type == FLOAT) {
-				sum = (float)cur_node->value.t_float;
+				type = FLOAT;
+				sum = (float)tmp.t_float;
 			}
 			else {
 				printf("ERROR : SYNTAX ERROR FOR SUB\n");
 				return;
 			}
-			key = (char*)malloc(sizeof(char)*tmp.lexed_len + 1);
-			strcpy(key, tmp.t_string);
+			key = (char*)malloc(sizeof(char)*cur_node->value.lexed_len + 1);
+			strcpy(key, cur_node->value.t_string);
 		}
 		else {
 			printf("ERROR : NOT SUB TYPE\n");
@@ -180,6 +185,7 @@ T_OBJ fn_sub() {
 		insert_dict_node(dict, key, &tmp);
 		free(key);
 	}
+	printf("SUB : %s, type : %d\n", tmp.t_string, tmp.type);	//디버깅용
 	return tmp;
 }
 
@@ -215,17 +221,19 @@ T_OBJ fn_mul() {
 			is_ident = true;
 			T_OBJ tmp = get_dict_obj(dict, cur_node->value.t_string);
 			if (tmp.type == INT) {
-				sum = (float)cur_node->value.t_int;
+				type = INT;
+				sum = (float)tmp.t_int;
 			}
 			else if (tmp.type == FLOAT) {
-				sum = (float)cur_node->value.t_float;
+				type = FLOAT;
+				sum = (float)tmp.t_float;
 			}
 			else {
 				printf("ERROR : SYNTAX ERROR FOR MUL\n");
 				return;
 			}
-			key = (char*)malloc(sizeof(char)*tmp.lexed_len + 1);
-			strcpy(key, tmp.t_string);
+			key = (char*)malloc(sizeof(char)*cur_node->value.lexed_len + 1);
+			strcpy(key, cur_node->value.t_string);
 		}
 		else {
 			printf("ERROR : NOT MUL TYPE\n");
@@ -263,6 +271,7 @@ T_OBJ fn_mul() {
 		insert_dict_node(dict, key, &tmp);
 		free(key);
 	}
+	printf("MUL : %s, type : %d\n", tmp.t_string, tmp.type);	//디버깅용
 	return tmp;
 }
 
@@ -311,17 +320,19 @@ T_OBJ fn_div() {
 			is_ident = true;
 			T_OBJ tmp = get_dict_obj(dict, cur_node->value.t_string);
 			if (tmp.type == INT) {
-				sum = (float)cur_node->value.t_int;
+				type = INT;
+				sum = (float)tmp.t_int;
 			}
 			else if (tmp.type == FLOAT) {
-				sum = (float)cur_node->value.t_float;
+				type =FLOAT;
+				sum = (float)tmp.t_float;
 			}
 			else {
 				printf("ERROR : SYNTAX ERROR FOR DIV\n");
 				return;
 			}
-			key = (char*)malloc(sizeof(char)*tmp.lexed_len + 1);
-			strcpy(key, tmp.t_string);
+			key = (char*)malloc(sizeof(char)*cur_node->value.lexed_len + 1);
+			strcpy(key, cur_node->value.t_string);
 		}
 		else {
 			printf("ERROR : NOT DIV TYPE\n");
@@ -359,6 +370,7 @@ T_OBJ fn_div() {
 		insert_dict_node(dict, key, &tmp);
 		free(key);
 	}
+	printf("DIV : %s, type : %d\n", tmp.t_string, tmp.type);	//디버깅용
 	return tmp;
 }
 
@@ -405,7 +417,7 @@ T_OBJ fn_setq() {
 		}
 	}
 	else {
-		// 정수 음수 문자열의 경우
+		// 정수 실수 문자열의 경우
 		if (cur_node->value.type == INT || cur_node->value.type == FLOAT || cur_node->value.type == STRING) {
 			insert_dict_node(dict, symbol, &(cur_node->value));
 			T_OBJ tmp = cur_node->value;
