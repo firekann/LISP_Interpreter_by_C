@@ -13,6 +13,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "lexer.h"
+#include "util.h"
 
 /******************************************/
 /* main driver                            */
@@ -33,12 +34,28 @@ int main()
 		do {
 			lex();
 		} while (nextToken != EOF);
-		LIST_NODE* node = obj_list->head;
-		while (node != NULL)
+
+		cur_node = obj_list->head;
+		call_fn();
+		
+		DICT_NODE* dict_node = dict->head;
+		while (dict_node != NULL)
 		{
-			printf("Next token is: %d, Next lexeme is %s\n", node->value.type, node->value.t_string);
-			node = node->next;
+			printf("key : %s , ", dict_node->key);
+			printf("type : %d , ", dict_node->value.type);
+			printf("value : %s\n", dict_node->value.t_string);
+			dict_node = dict_node->next;
 		}
+
+		/*
+		LIST_NODE* list_node = obj_list->head;
+		while (list_node != NULL)
+		{
+			printf("Next token is: %d, Next lexeme is %s\n", list_node->value.type, list_node->value.t_string);
+			list_node = list_node->next;
+		}
+		*/
+
 		ifFlag = 0;
 		free_list(obj_list);
 	}
