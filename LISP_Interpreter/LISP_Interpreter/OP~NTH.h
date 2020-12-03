@@ -10,5 +10,9 @@ T_OBJ fn_sub();
 T_OBJ fn_mul();
 T_OBJ fn_div();
 T_OBJ fn_setq();
+T_OBJ fn_list();
+T_OBJ fn_car();
+T_OBJ fn_cdr();
+T_OBJ fn_nth();
 
 #endif

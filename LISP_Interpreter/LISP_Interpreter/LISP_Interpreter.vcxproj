@@ -159,6 +159,7 @@
     <ClCompile Include="lexer.c" />
     <ClCompile Include="LISP_Interpreter.c" />
     <ClCompile Include="OP~NTH.c" />
+    <ClCompile Include="util.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ATOM~COND.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="lexer.h" />
     <ClInclude Include="OP~NTH.h" />
     <ClInclude Include="type.h" />
+    <ClInclude Include="util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
