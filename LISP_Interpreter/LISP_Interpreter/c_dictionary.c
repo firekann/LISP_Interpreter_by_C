@@ -54,7 +54,12 @@ void insert_dict_node(c_DICT* dict, char* key, T_OBJ* obj) {
 				strcpy(new_node->key, key);
 				new_node->value = *obj;
 				new_node->next = cur_node->next;
-				pre_node->next = new_node;
+				if (dict->dict_size == 1) {
+					dict->head = new_node;
+				}
+				else {
+					pre_node->next = new_node;
+				}
 				free_node(cur_node);
 				break;
 			}
@@ -73,7 +78,7 @@ void insert_dict_node(c_DICT* dict, char* key, T_OBJ* obj) {
 	}
 	else {
 		DICT_NODE* node = dict->head;
-		while (node != NULL)
+		while (node->next != NULL)
 		{
 			node = node->next;
 		}
