@@ -66,7 +66,7 @@
 #define SHARP 509
 #define STRING 510
 #define NIL 511
-#define LIST 512
+#define T_LIST 512
 #define BOOLEAN 513
 
 #define true 1
