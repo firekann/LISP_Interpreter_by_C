@@ -18,6 +18,28 @@
 /******************************************/
 /* main driver                            */
 /******************************************/
+
+void print_list(T_OBJ* value) {
+	printf("list size : %d\n", value->t_int);
+	T_OBJ* tmp = value->t_list_value;
+	T_OBJ* node = value->next;
+	while (node != NULL) {
+		if (tmp->type == T_LIST) print_list(tmp);
+		else {
+			printf("type : %d , ", tmp->type);
+			printf("value : %s\n", tmp->t_string);
+		}
+		tmp = node->t_list_value;
+		node = node->next;
+	}
+	if (tmp->type == T_LIST) print_list(tmp);
+	else {
+		printf("type : %d , ", tmp->type);
+		printf("value : %s\n", tmp->t_string);
+	}
+	return;
+}
+
 int main()
 {
 	dict = initialize_dict();
@@ -43,7 +65,11 @@ int main()
 		{
 			printf("key : %s , ", dict_node->key);
 			printf("type : %d , ", dict_node->value.type);
-			printf("value : %s\n", dict_node->value.t_string);
+			if (dict_node->value.type == T_LIST) {
+				printf("\n");
+				print_list(&(dict_node->value));
+			}
+			else printf("value : %s\n", dict_node->value.t_string);
 			dict_node = dict_node->next;
 		}
 
