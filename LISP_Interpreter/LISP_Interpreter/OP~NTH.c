@@ -825,7 +825,76 @@ T_OBJ fn_cdr(bool is_first) {
 }
 
 T_OBJ fn_nth() {
+	if (cur_node->value.type == LEFT_PAREN) {	//왼쪽 괄호 확인
+		left_paren_Count++;
+		cur_node = cur_node->next;
+		cur_node = cur_node->next;
+	}
+	else {
+		printf("ERROR : NO LEFT_PAREN FOR NTH\n");
+		return;
+	}
 
+	int nth;
+	if (cur_node->value.type == INT) {
+		nth = cur_node->value.t_int;
+		cur_node = cur_node->next;
+	}
+	else {
+		printf("ERROR : TYPE ERROR FOR NTH\n");
+		return;
+	}
+
+	T_OBJ tmp;
+	if (cur_node->value.type == SQUOTE) {
+		cur_node = cur_node->next;
+		if (cur_node->value.type == LEFT_PAREN) {	//괄호가 올 경우 처리함
+			LIST_NODE* tmp_node = cur_node->next;
+			if (tmp_node->value.type == INT || tmp_node->value.type == FLOAT || tmp_node->value.type == STRING || tmp_node->value.type == BOOLEAN) {
+				//괄호 뒤의 토큰이 함수가 아니면 make_list를 호출해준다.
+				tmp = fn_make_list();
+			}
+			else {
+				//괄호 뒤의 토큰이 함수라면 call_fn을 통해서 함수를 호출해준다.
+				tmp = call_fn();
+			}
+		}
+		else {	//괄호가 없을 경우 리스트가 아니므로 N번째 원소가 없음
+			printf("ERROR : TYPE ERROR FOR NTH\n");
+			return;
+		}
+	}
+	else if (cur_node->value.type == IDENT) {
+		tmp = get_dict_obj(dict, cur_node->value.t_string);
+		cur_node = cur_node->next;
+	}
+	else {
+		printf("ERROR : TYPE ERROR FOR NTH\n");
+		return;
+	}
+
+	if (tmp.type == T_LIST) {
+		if (tmp.t_int == 0) {	//리스트의 원소가 0개일 경우 에러
+			printf("ERROR : NO ITEM IN THE LIST ERROR FOR NTH\n");
+			return;
+		}
+		else {	//리스트에 원소가 있을 경우 맨 처음 것에서 원소만 리턴함
+			if (cur_node->value.type == RIGHT_PAREN) {
+				for (; nth--;) {
+					tmp = cdr(tmp);
+				}
+				return car(tmp);
+			}
+			else {
+				printf("ERROR : NO RIGHT_PAREN FOR NTH\n");
+				return;
+			}
+		}
+	}
+	else {
+		printf("ERROR : TYPE ERROR FOR NTH\n");
+		return;
+	}
 }
 
 T_OBJ fn_make_list() {
@@ -908,6 +977,62 @@ T_OBJ fn_make_list() {
 	else {
 		printf("ERROR : NO RIGHT_PAREN FOR MAKE_LIST\n");
 		free_list(tmp_list);
+		return;
+	}
+}
+
+T_OBJ car(T_OBJ tmp) {
+	if (tmp.type == T_LIST) {
+		if (tmp.t_int == 0) {	//리스트의 원소가 0개일 경우 에러
+			printf("ERROR : NO ITEM IN THE LIST ERROR FOR CAR(함수)\n");
+			return;
+		}
+		else {	//리스트에 원소가 있을 경우 맨 처음 것에서 원소만 리턴함
+			return *((T_OBJ*)(tmp.t_list_value));
+		}
+	}
+	else {
+		printf("ERROR : TYPE ERROR FOR CAR(함수)\n");
+		return;
+	}
+}
+
+T_OBJ cdr(T_OBJ tmp) {
+	if (tmp.type == T_LIST) {
+		if (tmp.t_int < 2) {	//리스트의 원소가 0개일 경우 에러
+			printf("ERROR : NO ITEM IN THE LIST ERROR FOR CDR(함수)\n");
+			return;
+		}
+		else {	//리스트에 원소가 2개 이상일 경우 첫 원소를 제외한 나머지 원소를 반환한다.
+			c_LIST* tmp_list = initialize_list();
+			int list_size = tmp.t_int - 1;
+			T_OBJ* node = tmp.next;
+			while (node != NULL) {	//나머지 원소를 리스트에 넣는다.
+				T_OBJ tmp_node = *node;
+				tmp_node.t_int = list_size;
+				insert_list_node(tmp_list, &tmp_node);
+				node = node->next;
+			}
+			T_OBJ head;
+			T_OBJ* pre_obj = &head;
+			head.next = head.t_list_value = NULL;
+			LIST_NODE* tmp_node = tmp_list->head;
+			while (tmp_node != NULL) {	//리스트의 원소들로 obj리스트를 생성한다.
+				if (head.t_list_value == NULL) {
+					head = tmp_node->value;
+				}
+				else {
+					pre_obj->next = &(tmp_node->value);
+					pre_obj = &(tmp_node->value);
+				}
+				tmp_node = tmp_node->next;
+			}
+			free(tmp_list);
+			return head;
+		}
+	}
+	else {
+		printf("ERROR : TYPE ERROR FOR CDR(함수)\n");
 		return;
 	}
 }

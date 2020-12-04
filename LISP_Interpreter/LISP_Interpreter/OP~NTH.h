@@ -15,5 +15,7 @@ T_OBJ fn_car(bool);	//기본적으로 true로 인자를 주고 호출하면 됨
 T_OBJ fn_cdr(bool);	//기본적으로 true로 인자를 주고 호출하면 됨
 T_OBJ fn_nth();
 T_OBJ fn_make_list();
+T_OBJ car(T_OBJ);
+T_OBJ cdr(T_OBJ);
 
 #endif
