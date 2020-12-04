@@ -12,8 +12,8 @@ T_OBJ call_fn() {
 	else if (tmp_node->value.type == DIV_OP) return fn_div();
 	else if (tmp_node->value.type == SETQ) return fn_setq();
 	else if (tmp_node->value.type == LIST) return fn_list();
-	else if (tmp_node->value.type == CAR) return fn_car();
-	else if (tmp_node->value.type == CDR) return fn_cdr();
+	else if (tmp_node->value.type == CAR) return fn_car(true);
+	else if (tmp_node->value.type == CDR) return fn_cdr(true);
 	else if (tmp_node->value.type == NTH) return fn_nth();
 	else if (tmp_node->value.type == CONS) return;
 	else if (tmp_node->value.type == REVERSE) return;
