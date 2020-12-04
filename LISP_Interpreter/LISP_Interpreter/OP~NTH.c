@@ -13,7 +13,7 @@ T_OBJ fn_add() {
 	}
 	else {	//없을시 에러
 		printf("ERROR : NO LEFT_PAREN FOR ADD\n");
-		return;
+		return return_false();
 	}
 
 	int cnt = 0;	//나온 원소의 수를 카운트 하기 위한 변수
@@ -46,7 +46,7 @@ T_OBJ fn_add() {
 			else {
 				printf("ERROR : TYPE ERROR FOR ADD\n");
 				free(key);
-				return;
+				return return_false();
 			}
 		}
 		else if (cnt == 0 && cur_node->value.type == IDENT) {	//add의 첫번째 인자가 IDENT일 경우 그 IDENT의 값을 바꿔줌
@@ -62,7 +62,7 @@ T_OBJ fn_add() {
 			}
 			else {
 				printf("ERROR : TYPE ERROR FOR ADD\n");
-				return;
+				return return_false();
 			}
 			key = (char*)malloc(sizeof(char)*cur_node->value.lexed_len + 1);
 			strcpy(key, cur_node->value.t_string);
@@ -70,12 +70,12 @@ T_OBJ fn_add() {
 		else {
 			printf("ERROR : TYPE ERROR FOR ADD\n");
 			free(key);
-			return;
+			return return_false();
 		}
 		if (cur_node->next == NULL) {
 			printf("ERROR : SYNTAX ERROR FOR ADD\n");
 			free(key);
-			return;
+			return return_false();
 		}
 		if (flag) {
 			cur_node = cur_node->next;
@@ -85,7 +85,7 @@ T_OBJ fn_add() {
 	if (cnt == 0) {
 		printf("ERROR : SYNTAX ERROR FOR ADD\n");
 		free(key);
-		return;
+		return return_false();
 	}
 	if (cur_node->value.type == RIGHT_PAREN) {
 		right_paren_Count++;
@@ -94,6 +94,7 @@ T_OBJ fn_add() {
 	T_OBJ tmp;
 	tmp.type = type;
 	tmp.next = NULL;
+	tmp.t_bool = true;
 	if (type == INT) {
 		tmp.t_int = (int)sum;
 		tmp.t_string = (char*)malloc(sizeof(char) * 20);
@@ -120,7 +121,7 @@ T_OBJ fn_sub() {
 	}
 	else {	//없을시 에러
 		printf("ERROR : NO LEFT_PAREN FOR SUB\n");
-		return;
+		return return_false();
 	}
 
 	int cnt = 0;	//나온 원소의 수를 카운트 하기 위한 변수
@@ -172,7 +173,7 @@ T_OBJ fn_sub() {
 			else {
 				printf("ERROR : TYPE ERROR FOR SUB\n");
 				free(key);
-				return;
+				return return_false();
 			}
 		}
 		else if (cnt == 0 && cur_node->value.type == IDENT) {	//sub의 첫번째 인자가 IDENT일 경우 그 IDENT의 값을 바꿔줌
@@ -188,7 +189,7 @@ T_OBJ fn_sub() {
 			}
 			else {
 				printf("ERROR : TYPE ERROR FOR SUB\n");
-				return;
+				return return_false();
 			}
 			key = (char*)malloc(sizeof(char)*cur_node->value.lexed_len + 1);
 			strcpy(key, cur_node->value.t_string);
@@ -196,12 +197,12 @@ T_OBJ fn_sub() {
 		else {
 			printf("ERROR : TYPE ERROR FOR SUB\n");
 			free(key);
-			return;
+			return return_false();
 		}
 		if (cur_node->next == NULL) {
 			printf("ERROR : SYNTAX ERROR FOR SUB\n");
 			free(key);
-			return;
+			return return_false();
 		}
 		if (flag) {
 			cur_node = cur_node->next;
@@ -211,7 +212,7 @@ T_OBJ fn_sub() {
 	if (cnt == 0) {
 		printf("ERROR : SYNTAX ERROR FOR SUB\n");
 		free(key);
-		return;
+		return return_false();
 	}
 	if (cur_node->value.type == RIGHT_PAREN) {
 		right_paren_Count++;
@@ -220,6 +221,7 @@ T_OBJ fn_sub() {
 	T_OBJ tmp;
 	tmp.type = type;
 	tmp.next = NULL;
+	tmp.t_bool = true;
 	if (type == INT) {
 		tmp.t_int = (int)sum;
 		tmp.t_string = (char*)malloc(sizeof(char) * 20);
@@ -246,7 +248,7 @@ T_OBJ fn_mul() {
 	}
 	else {	//없을시 에러
 		printf("ERROR : NO LEFT_PAREN FOR MUL\n");
-		return;
+		return return_false();
 	}
 
 	int cnt = 0;	//나온 원소의 수를 카운트 하기 위한 변수
@@ -279,7 +281,7 @@ T_OBJ fn_mul() {
 			else {
 				printf("ERROR : TYPE ERROR FOR MUL\n");
 				free(key);
-				return;
+				return return_false();
 			}
 		}
 		else if (cnt == 0 && cur_node->value.type == IDENT) {	//mul의 첫번째 인자가 IDENT일 경우 그 IDENT의 값을 바꿔줌
@@ -295,7 +297,7 @@ T_OBJ fn_mul() {
 			}
 			else {
 				printf("ERROR : TYPE ERROR FOR MUL\n");
-				return;
+				return return_false();
 			}
 			key = (char*)malloc(sizeof(char)*cur_node->value.lexed_len + 1);
 			strcpy(key, cur_node->value.t_string);
@@ -303,12 +305,12 @@ T_OBJ fn_mul() {
 		else {
 			printf("ERROR : TYPE ERROR FOR MUL\n");
 			free(key);
-			return;
+			return return_false();
 		}
 		if (cur_node->next == NULL) {
 			printf("ERROR : SYNTAX ERROR FOR MUL\n");
 			free(key);
-			return;
+			return return_false();
 		}
 		if (flag) {
 			cur_node = cur_node->next;
@@ -318,7 +320,7 @@ T_OBJ fn_mul() {
 	if (cnt == 0) {
 		printf("ERROR : SYNTAX ERROR FOR MUL\n");
 		free(key);
-		return;
+		return return_false();
 	}
 	if (cur_node->value.type == RIGHT_PAREN) {
 		right_paren_Count++;
@@ -327,6 +329,7 @@ T_OBJ fn_mul() {
 	T_OBJ tmp;
 	tmp.type = type;
 	tmp.next = NULL;
+	tmp.t_bool = true;
 	if (type == INT) {
 		tmp.t_int = (int)sum;
 		tmp.t_string = (char*)malloc(sizeof(char) * 20);
@@ -353,7 +356,7 @@ T_OBJ fn_div() {
 	}
 	else {	//없을시 에러
 		printf("ERROR : NO LEFT_PAREN FOR DIV\n");
-		return;
+		return return_false();
 	}
 
 	int cnt = 0;	//나온 원소의 수를 카운트 하기 위한 변수
@@ -404,7 +407,7 @@ T_OBJ fn_div() {
 			else {
 				printf("ERROR : TYPE ERROR FOR DIV\n");
 				free(key);
-				return;
+				return return_false();
 			}
 		}
 		else if (cnt == 0 && cur_node->value.type == IDENT) {	//div의 첫번째 인자가 IDENT일 경우 그 IDENT의 값을 바꿔줌
@@ -420,7 +423,7 @@ T_OBJ fn_div() {
 			}
 			else {
 				printf("ERROR : TYPE ERROR FOR DIV\n");
-				return;
+				return return_false();
 			}
 			key = (char*)malloc(sizeof(char)*cur_node->value.lexed_len + 1);
 			strcpy(key, cur_node->value.t_string);
@@ -428,12 +431,12 @@ T_OBJ fn_div() {
 		else {
 			printf("ERROR : TYPE ERROR FOR DIV\n");
 			free(key);
-			return;
+			return return_false();
 		}
 		if (cur_node->next == NULL) {
 			printf("ERROR : SYNTAX ERROR FOR DIV\n");
 			free(key);
-			return;
+			return return_false();
 		}
 		if (flag) {
 			cur_node = cur_node->next;
@@ -443,7 +446,7 @@ T_OBJ fn_div() {
 	if (cnt == 0) {
 		printf("ERROR : SYNTAX ERROR FOR DIV\n");
 		free(key);
-		return;
+		return return_false();
 	}
 	if (cur_node->value.type == RIGHT_PAREN) {
 		right_paren_Count++;
@@ -452,6 +455,7 @@ T_OBJ fn_div() {
 	T_OBJ tmp;
 	tmp.type = type;
 	tmp.next = NULL;
+	tmp.t_bool = true;
 	if (type == INT) {
 		tmp.t_int = (int)sum;
 		tmp.t_string = (char*)malloc(sizeof(char) * 20);
@@ -478,7 +482,7 @@ T_OBJ fn_setq() {
 	}
 	else {
 		printf("ERROR : NO LEFT_PAREN FOR SETQ\n");
-		return;
+		return return_false();
 	}
 
 	char* symbol;	//변수 값
@@ -490,7 +494,7 @@ T_OBJ fn_setq() {
 	}
 	else {
 		printf("ERROR : NO IDENTIFIER FOR SETQ\n");
-		return;
+		return return_false();
 	}
 
 	T_OBJ res;
@@ -507,7 +511,7 @@ T_OBJ fn_setq() {
 		else {
 			printf("ERROR : TYPE ERROR FOR SETQ\n");
 			free(symbol);
-			return;
+			return return_false();
 		}
 	}
 	else if (cur_node->value.type == IDENT) {	//a=b의 경우 b의 값을 a에 대입 하는 느낌
@@ -525,18 +529,19 @@ T_OBJ fn_setq() {
 		else {
 			printf("ERROR : VALUE ERROR FOR SETQ\n");
 			free(symbol);
-			return;
+			return return_false();
 		}
 	}
 	free(symbol);
 	if (cur_node->value.type == RIGHT_PAREN) {
 		right_paren_Count++;
 		cur_node = cur_node->next;
+		res.t_bool = true;
 		return res;
 	}
 	else {
 		printf("ERROR : NO RIGHT_PAREN FOR SETQ\n");
-		return;
+		return return_false();
 	}
 }
 
@@ -548,7 +553,7 @@ T_OBJ fn_list() {
 	}
 	else {
 		printf("ERROR : NO LEFT_PAREN FOR LIST\n");
-		return;
+		return return_false();
 	}
 
 	int cnt = 0;
@@ -580,7 +585,7 @@ T_OBJ fn_list() {
 		else {
 			printf("ERROR : TYPE ERROR FOR LIST\n");
 			free_list(tmp_list);
-			return;
+			return return_false();
 		}
 		if (tmp.type == IDENT) {	//IDENT의 경우 STRING으로 취급해서 처리
 			tmp.type = STRING;
@@ -592,7 +597,7 @@ T_OBJ fn_list() {
 		else {
 			printf("ERROR : TYPE ERROR FOR LIST\n");
 			free_list(tmp_list);
-			return;
+			return return_false();
 		}
 		cnt++;
 	}
@@ -602,6 +607,7 @@ T_OBJ fn_list() {
 	head.type = T_LIST;
 	head.t_int = cnt;
 	head.next = head.t_list_value = NULL;
+	head.t_bool = true;
 	if (cnt == 0) {	//인자가 0개면 길이가 0인 리스트를 반환한다.
 		return head;
 	}
@@ -616,6 +622,7 @@ T_OBJ fn_list() {
 			tmp->type = T_LIST;
 			tmp->t_int = cnt;
 			tmp->t_list_value = &(tmp_node->value);
+			tmp->t_bool = true;
 			pre_obj->next = tmp;
 			pre_obj = tmp;
 		}
@@ -630,7 +637,7 @@ T_OBJ fn_list() {
 	else {
 		printf("ERROR : NO RIGHT_PAREN FOR LIST\n");
 		free_list(tmp_list);
-		return;
+		return return_false();
 	}
 }
 
@@ -643,7 +650,7 @@ T_OBJ fn_car(bool is_first) {
 		}
 		else {
 			printf("ERROR : NO LEFT_PAREN FOR CAR\n");
-			return;
+			return return_false();
 		}
 	}
 	else {
@@ -673,7 +680,7 @@ T_OBJ fn_car(bool is_first) {
 		}
 		else {	//괄호가 없을 경우 리스트가 아니므로 첫번째 원소가 없음
 			printf("ERROR : TYPE ERROR FOR CAR\n");
-			return;
+			return return_false();
 		}
 	}
 	else if (cur_node->value.type == IDENT) {
@@ -688,32 +695,36 @@ T_OBJ fn_car(bool is_first) {
 	}
 	else {
 		printf("ERROR : TYPE ERROR FOR CAR\n");
-		return;
+		return return_false();
 	}
 
 	if (tmp.type == T_LIST) {
 		if (tmp.t_int == 0) {	//리스트의 원소가 0개일 경우 에러
 			printf("ERROR : NO ITEM IN THE LIST ERROR FOR CAR\n");
-			return;
+			return return_false();
 		}
 		else {	//리스트에 원소가 있을 경우 맨 처음 것에서 원소만 리턴함
 			if (!is_first) {
-				return *((T_OBJ*)(tmp.t_list_value));
+				T_OBJ t = *((T_OBJ*)(tmp.t_list_value));
+				t.t_bool = true;
+				return t;
 			}
 			else if (cur_node->value.type == RIGHT_PAREN) {
 				right_paren_Count++;
 				cur_node = cur_node->next;
-				return *((T_OBJ*)(tmp.t_list_value));
+				T_OBJ t = *((T_OBJ*)(tmp.t_list_value));
+				t.t_bool = true;
+				return t;
 			}
 			else {
 				printf("ERROR : NO RIGHT_PAREN FOR CAR\n");
-				return;
+				return return_false();
 			}
 		}
 	}
 	else {
 		printf("ERROR : TYPE ERROR FOR CAR\n");
-		return;
+		return return_false();
 	}
 }
 
@@ -726,7 +737,7 @@ T_OBJ fn_cdr(bool is_first) {
 		}
 		else {
 			printf("ERROR : NO LEFT_PAREN FOR CDR\n");
-			return;
+			return return_false();
 		}
 	}
 	else {
@@ -756,7 +767,7 @@ T_OBJ fn_cdr(bool is_first) {
 		}
 		else {	//괄호가 없을 경우 리스트가 아니므로 첫번째 원소가 없음
 			printf("ERROR : TYPE ERROR FOR CDR\n");
-			return;
+			return return_false();
 		}
 	}
 	else if (cur_node->value.type == IDENT) {
@@ -771,13 +782,13 @@ T_OBJ fn_cdr(bool is_first) {
 	}
 	else {
 		printf("ERROR : TYPE ERROR FOR CDR\n");
-		return;
+		return return_false();
 	}
 
 	if (tmp.type == T_LIST) {
 		if (tmp.t_int < 2) {	//리스트의 원소가 0개일 경우 에러
 			printf("ERROR : NO ITEM IN THE LIST ERROR FOR CDR\n");
-			return;
+			return return_false();
 		}
 		else {	//리스트에 원소가 2개 이상일 경우 첫 원소를 제외한 나머지 원소를 반환한다.
 			c_LIST* tmp_list = initialize_list();
@@ -790,10 +801,12 @@ T_OBJ fn_cdr(bool is_first) {
 				node = node->next;
 			}
 			T_OBJ head;
+			head.t_bool = true;
 			T_OBJ* pre_obj = &head;
 			head.next = head.t_list_value = NULL;
 			LIST_NODE* tmp_node = tmp_list->head;
 			while (tmp_node != NULL) {	//리스트의 원소들로 obj리스트를 생성한다.
+				tmp_node->value.t_bool = true;
 				if (head.t_list_value == NULL) {
 					head = tmp_node->value;
 				}
@@ -814,13 +827,13 @@ T_OBJ fn_cdr(bool is_first) {
 			}
 			else {
 				printf("ERROR : NO RIGHT_PAREN FOR CDR\n");
-				return;
+				return return_false();
 			}
 		}
 	}
 	else {
 		printf("ERROR : TYPE ERROR FOR CDR\n");
-		return;
+		return return_false();
 	}
 }
 
@@ -832,7 +845,7 @@ T_OBJ fn_nth() {
 	}
 	else {
 		printf("ERROR : NO LEFT_PAREN FOR NTH\n");
-		return;
+		return return_false();
 	}
 
 	int nth;
@@ -842,7 +855,7 @@ T_OBJ fn_nth() {
 	}
 	else {
 		printf("ERROR : TYPE ERROR FOR NTH\n");
-		return;
+		return return_false();
 	}
 
 	T_OBJ tmp;
@@ -861,7 +874,7 @@ T_OBJ fn_nth() {
 		}
 		else {	//괄호가 없을 경우 리스트가 아니므로 N번째 원소가 없음
 			printf("ERROR : TYPE ERROR FOR NTH\n");
-			return;
+			return return_false();
 		}
 	}
 	else if (cur_node->value.type == IDENT) {
@@ -870,13 +883,13 @@ T_OBJ fn_nth() {
 	}
 	else {
 		printf("ERROR : TYPE ERROR FOR NTH\n");
-		return;
+		return return_false();
 	}
 
 	if (tmp.type == T_LIST) {
 		if (tmp.t_int == 0) {	//리스트의 원소가 0개일 경우 에러
 			printf("ERROR : NO ITEM IN THE LIST ERROR FOR NTH\n");
-			return;
+			return return_false();
 		}
 		else {	//리스트에 원소가 있을 경우 맨 처음 것에서 원소만 리턴함
 			if (cur_node->value.type == RIGHT_PAREN) {
@@ -887,13 +900,13 @@ T_OBJ fn_nth() {
 			}
 			else {
 				printf("ERROR : NO RIGHT_PAREN FOR NTH\n");
-				return;
+				return return_false();
 			}
 		}
 	}
 	else {
 		printf("ERROR : TYPE ERROR FOR NTH\n");
-		return;
+		return return_false();
 	}
 }
 
@@ -904,7 +917,7 @@ T_OBJ fn_make_list() {
 	}
 	else {
 		printf("ERROR : NO LEFT_PAREN FOR MAKE_LIST\n");
-		return;
+		return return_false();
 	}
 
 	int cnt = 0;
@@ -937,7 +950,7 @@ T_OBJ fn_make_list() {
 		else {
 			printf("ERROR : TYPE ERROR FOR MAKE_LIST\n");
 			free_list(tmp_list);
-			return;
+			return return_false();
 		}
 		cnt++;
 	}
@@ -947,6 +960,7 @@ T_OBJ fn_make_list() {
 	head.type = T_LIST;
 	head.t_int = cnt;
 	head.next = head.t_list_value = NULL;
+	head.t_bool = true;
 	if (cnt == 0) {	//인자가 0개면 길이가 0인 리스트를 반환한다.
 		free_list(tmp_list);
 		return head;
@@ -963,6 +977,7 @@ T_OBJ fn_make_list() {
 			tmp->t_int = cnt;
 			tmp->t_list_value = &(tmp_node->value);
 			tmp->next = NULL;
+			tmp->t_bool = true;
 			pre_obj->next = tmp;
 			pre_obj = tmp;
 		}
@@ -977,7 +992,7 @@ T_OBJ fn_make_list() {
 	else {
 		printf("ERROR : NO RIGHT_PAREN FOR MAKE_LIST\n");
 		free_list(tmp_list);
-		return;
+		return return_false();
 	}
 }
 
@@ -985,15 +1000,17 @@ T_OBJ car(T_OBJ tmp) {
 	if (tmp.type == T_LIST) {
 		if (tmp.t_int == 0) {	//리스트의 원소가 0개일 경우 에러
 			printf("ERROR : NO ITEM IN THE LIST ERROR FOR CAR(함수)\n");
-			return;
+			return return_false();
 		}
 		else {	//리스트에 원소가 있을 경우 맨 처음 것에서 원소만 리턴함
-			return *((T_OBJ*)(tmp.t_list_value));
+			T_OBJ t = *((T_OBJ*)(tmp.t_list_value));
+			t.t_bool = true;
+			return t;
 		}
 	}
 	else {
 		printf("ERROR : TYPE ERROR FOR CAR(함수)\n");
-		return;
+		return return_false();
 	}
 }
 
@@ -1001,7 +1018,7 @@ T_OBJ cdr(T_OBJ tmp) {
 	if (tmp.type == T_LIST) {
 		if (tmp.t_int < 2) {	//리스트의 원소가 0개일 경우 에러
 			printf("ERROR : NO ITEM IN THE LIST ERROR FOR CDR(함수)\n");
-			return;
+			return return_false();
 		}
 		else {	//리스트에 원소가 2개 이상일 경우 첫 원소를 제외한 나머지 원소를 반환한다.
 			c_LIST* tmp_list = initialize_list();
@@ -1014,10 +1031,12 @@ T_OBJ cdr(T_OBJ tmp) {
 				node = node->next;
 			}
 			T_OBJ head;
+			head.t_bool = true;
 			T_OBJ* pre_obj = &head;
 			head.next = head.t_list_value = NULL;
 			LIST_NODE* tmp_node = tmp_list->head;
 			while (tmp_node != NULL) {	//리스트의 원소들로 obj리스트를 생성한다.
+				tmp_node->value.t_bool = true;
 				if (head.t_list_value == NULL) {
 					head = tmp_node->value;
 				}
@@ -1033,6 +1052,6 @@ T_OBJ cdr(T_OBJ tmp) {
 	}
 	else {
 		printf("ERROR : TYPE ERROR FOR CDR(함수)\n");
-		return;
+		return return_false();
 	}
 }
