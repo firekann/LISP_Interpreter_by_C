@@ -77,7 +77,7 @@ typedef struct {
 	int type;
 	int lexed_len;
 	char* t_string;
-	int t_int;
+	int t_int;	//type이 INT의 경우에는 정수값이고 type이 T_LIST일 경우에는 리스트의 크기에 해당함
 	float t_float;
 	bool t_bool;
 	P_OBJ t_list_value, next;

@@ -14,5 +14,6 @@ T_OBJ fn_list();
 T_OBJ fn_car();
 T_OBJ fn_cdr();
 T_OBJ fn_nth();
+T_OBJ fn_make_list();
 
 #endif
