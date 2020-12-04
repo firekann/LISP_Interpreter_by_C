@@ -92,6 +92,8 @@ int main()
 					else if (list->type == STRING){
 						printf("%s ", list->t_string);
 					}
+					if (i + 1 != cycle)
+						printf(" ");
 				}
 				printf(")\n");
 			}
