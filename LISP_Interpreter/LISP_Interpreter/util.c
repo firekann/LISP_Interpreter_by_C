@@ -1,8 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "util.h"
-#include "OP~NTH.h"
-#include "ATOM~COND.h"
-#include "CONS~SUBST.h"
 
 T_OBJ call_fn() {
 	LIST_NODE* tmp_node = cur_node->next;
@@ -23,5 +20,16 @@ T_OBJ call_fn() {
 	else if (tmp_node->value.type == ASSOC) return;
 	else if (tmp_node->value.type == REMOVE) return;
 	else if (tmp_node->value.type == SUBST) return;
+	else if (tmp_node->value.type == ATOM) return fn_atom();
+	else if (tmp_node->value.type == L_NULL) return fn_null();
+	else if (tmp_node->value.type == NUMBERP) return fn_numberp();
+	else if (tmp_node->value.type == ZEROP) return fn_zerop();
+	else if (tmp_node->value.type == MINUSP) return fn_minusp();
+	else if (tmp_node->value.type == EQUAL) return fn_equal();
+	else if (tmp_node->value.type == LEFT_INEQUAL_SIGN) return fn_left_inequal();
+	else if (tmp_node->value.type == RIGHT_INEQUAL_SIGN) return fn_right_inequal();
+	else if (tmp_node->value.type == LEFT_INEQUAL_SAME_SIGN) return fn_left_inequal_same();
+	else if (tmp_node->value.type == RIGHT_INEQUAL_SAME_SIGN) return fn_right_inequal_same();
+	else if (tmp_node->value.type == STRINGP) return fn_stringp();
 	else return;
 }
