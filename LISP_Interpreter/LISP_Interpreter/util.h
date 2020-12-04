@@ -9,5 +9,6 @@
 #include "CONS~SUBST.h"
 
 T_OBJ call_fn();
+T_OBJ return_false();
 
 #endif

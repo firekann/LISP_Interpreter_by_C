@@ -33,3 +33,10 @@ T_OBJ call_fn() {
 	else if (tmp_node->value.type == STRINGP) return fn_stringp();
 	else return;
 }
+
+T_OBJ return_false() {
+	T_OBJ error_result;
+	error_result.type = BOOLEAN;
+	error_result.t_bool = false;
+	return error_result;
+}
