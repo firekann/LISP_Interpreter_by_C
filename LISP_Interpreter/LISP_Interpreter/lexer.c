@@ -200,7 +200,7 @@ int lex() {
 			nextToken = EQUAL;
 		else if (!strcmp("STRINGP", lexeme))
 			nextToken = STRINGP;
-		/* ���ǹ� */
+		/*  */
 		else if (!strcmp("IF", lexeme))
 			nextToken = IF;
 		else if (!strcmp("COND", lexeme))
@@ -253,6 +253,8 @@ int lex() {
 					}
 				}
 			}
+			else
+				nextToken = IDENT;
 		}
 		else
 			nextToken = IDENT;
