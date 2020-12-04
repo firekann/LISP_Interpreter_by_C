@@ -2035,3 +2035,157 @@ T_OBJ fn_stringp(){
 	return result;
 }
 
+T_OBJ fn_if(){
+	T_OBJ result;
+	result.type = BOOLEAN;
+	result.t_bool = false;
+
+	if (cur_node->value.type == LEFT_PAREN){ // check LEFT_PAREN existence
+		left_paren_Count++;
+		cur_node = cur_node->next;
+	}
+	else
+		return result;
+
+	if (cur_node->value.type == IF){ // check instruction STRINGP
+		if (!strcmp(cur_node->value.t_string, "IF"))
+			cur_node = cur_node->next;
+		else
+			return result;
+	}
+	else
+		return result;
+
+	int currentType = cur_node->value.type;
+	int condition = false;
+	T_OBJ retValue;
+
+	if (currentType == LEFT_PAREN){
+		retValue = call_fn();
+		while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+			cur_node = cur_node->next;
+			if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+				cur_node = cur_node->next;
+				right_paren_Count++;
+				break;
+			}
+		}
+		if (cur_node == NULL)
+			return result;
+	}
+	else {
+		return result;
+	}
+
+	if (retValue.type == INT){
+		if (retValue.t_int == 0)
+			condition = false;
+		else
+			condition = true;
+	}
+	else if (retValue.type == FLOAT){
+		if (retValue.t_float == 0)
+			condition = false;
+		else
+			condition = true;
+	}
+	else if (retValue.t_bool == 0){
+		condition = false;
+	}
+	else if (retValue.t_bool == 1){
+		condition = true;
+	}
+
+	if (condition == true){
+		if (currentType == LEFT_PAREN){
+			retValue = call_fn();
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+				cur_node = cur_node->next;
+				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+					cur_node = cur_node->next;
+					right_paren_Count++;
+					break;
+				}
+			}
+			if (cur_node == NULL)
+				return result;
+		}
+		else {
+			return result;
+		}
+		if (currentType == LEFT_PAREN){
+			left_paren_Count++;
+			int pCount = 1;
+			cur_node = cur_node->next;
+			while (cur_node != NULL && pCount != 0){
+				cur_node = cur_node->next;
+				if (cur_node->value.type == LEFT_PAREN){
+					pCount++;
+				}
+				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+					cur_node = cur_node->next;
+					right_paren_Count++;
+					pCount--;
+				}
+			}
+			if (cur_node == NULL)
+				return result;
+		}
+	}
+	else if (condition == false){
+		if (currentType == LEFT_PAREN){
+			left_paren_Count++;
+			int pCount = 1;
+			cur_node = cur_node->next;
+			while (cur_node != NULL && pCount != 0){
+				cur_node = cur_node->next;
+				if (cur_node->value.type == LEFT_PAREN){
+					pCount++;
+				}
+				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+					cur_node = cur_node->next;
+					right_paren_Count++;
+					pCount--;
+				}
+			}
+			if (cur_node == NULL)
+				return result;
+		}
+		currentType = cur_node->value.type;
+
+		if (currentType == LEFT_PAREN){
+			retValue = call_fn();
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+				cur_node = cur_node->next;
+				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+					cur_node = cur_node->next;
+					right_paren_Count++;
+					break;
+				}
+			}
+			if (cur_node == NULL)
+				return result;
+		}
+		else if (currentType == RIGHT_PAREN){
+		}
+		else {
+			return result;
+		}
+	}
+	else
+		return result;
+
+	currentType = cur_node->value.type;
+	if (currentType == RIGHT_PAREN){ // end of instruction
+		right_paren_Count++;
+		cur_node = cur_node->next;
+		if (cur_node->value.type == EOF || cur_node->value.type == SEMI_COLON || cur_node->value.type == RIGHT_PAREN || cur_node->value.type == LEFT_PAREN){
+			return retValue;
+		}
+		if (ifFlag){
+			return retValue;
+		}
+	}
+
+	return result;
+}
