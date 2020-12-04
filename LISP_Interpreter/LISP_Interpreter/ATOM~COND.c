@@ -2047,7 +2047,7 @@ T_OBJ fn_if(){
 	else
 		return result;
 
-	if (cur_node->value.type == IF){ // check instruction STRINGP
+	if (cur_node->value.type == IF){ // check instruction IF
 		if (!strcmp(cur_node->value.t_string, "IF"))
 			cur_node = cur_node->next;
 		else
@@ -2120,6 +2120,7 @@ T_OBJ fn_if(){
 			while (cur_node != NULL && pCount != 0){
 				cur_node = cur_node->next;
 				if (cur_node->value.type == LEFT_PAREN){
+					left_paren_Count++;
 					pCount++;
 				}
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -2131,6 +2132,9 @@ T_OBJ fn_if(){
 			if (cur_node == NULL)
 				return result;
 		}
+		else {
+			return result;
+		}
 	}
 	else if (condition == false){
 		if (currentType == LEFT_PAREN){
@@ -2140,6 +2144,7 @@ T_OBJ fn_if(){
 			while (cur_node != NULL && pCount != 0){
 				cur_node = cur_node->next;
 				if (cur_node->value.type == LEFT_PAREN){
+					left_paren_Count++;
 					pCount++;
 				}
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -2174,6 +2179,215 @@ T_OBJ fn_if(){
 	}
 	else
 		return result;
+
+	currentType = cur_node->value.type;
+	if (currentType == RIGHT_PAREN){ // end of instruction
+		right_paren_Count++;
+		cur_node = cur_node->next;
+		if (cur_node->value.type == EOF || cur_node->value.type == SEMI_COLON || cur_node->value.type == RIGHT_PAREN || cur_node->value.type == LEFT_PAREN){
+			return retValue;
+		}
+		if (ifFlag){
+			return retValue;
+		}
+	}
+
+	return result;
+}
+
+T_OBJ fn_cond(){
+	T_OBJ result;
+	result.type = BOOLEAN;
+	result.t_bool = false;
+
+	if (cur_node->value.type == LEFT_PAREN){ // check LEFT_PAREN existence
+		left_paren_Count++;
+		cur_node = cur_node->next;
+	}
+	else
+		return result;
+
+	if (cur_node->value.type == COND){ // check instruction COND
+		if (!strcmp(cur_node->value.t_string, "COND"))
+			cur_node = cur_node->next;
+		else
+			return result;
+	}
+	else
+		return result;
+
+	int currentType;
+	int condition = false;
+	T_OBJ retValue;
+
+	while (condition == false){
+		currentType = cur_node->value.type;
+		if (currentType == LEFT_PAREN){
+			left_paren_Count++;
+			cur_node = cur_node->next;
+			currentType = cur_node->value.type;
+		}
+		else {
+			return result;
+		}
+
+		if (currentType == LEFT_PAREN){
+			retValue = call_fn();
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+				cur_node = cur_node->next;
+				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+					cur_node = cur_node->next;
+					right_paren_Count++;
+					break;
+				}
+			}
+			if (cur_node == NULL)
+				return result;
+		}
+		else {
+			return result;
+		}
+
+		currentType = cur_node->value.type;
+
+		if (retValue.t_bool == true){
+			condition = true;
+			if (currentType == LEFT_PAREN){
+				retValue = call_fn();
+				while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+					cur_node = cur_node->next;
+					if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+						cur_node = cur_node->next;
+						right_paren_Count++;
+						break;
+					}
+				}
+				if (cur_node == NULL)
+					return result;
+			}
+			else {
+				return result;
+			}
+		}
+		else if (retValue.t_bool == false){
+			if (currentType == LEFT_PAREN){
+				left_paren_Count++;
+				int pCount = 1;
+				cur_node = cur_node->next;
+				while (cur_node != NULL && pCount != 0){
+					cur_node = cur_node->next;
+					if (cur_node->value.type == LEFT_PAREN){
+						left_paren_Count++;
+						pCount++;
+					}
+					if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+						cur_node = cur_node->next;
+						right_paren_Count++;
+						pCount--;
+					}
+				}
+				if (cur_node == NULL)
+					return result;
+			}
+			else {
+				return result;
+			}
+		}
+
+		currentType = cur_node->value.type;
+
+		if (currentType == RIGHT_PAREN){
+			right_paren_Count++;
+			cur_node = cur_node->next;			
+			if (cur_node->value.type == SEMI_COLON){
+				cur_node = cur_node->next;
+			}
+		}
+		else {
+			return result;
+		}
+	}
+
+	LIST_NODE *checkLast;
+
+	if (condition == true){		
+		while (1){		
+			checkLast = cur_node->next;
+			if (cur_node->value.type == RIGHT_PAREN && checkLast->value.type == EOF){
+				break;
+			}
+			else if (cur_node->value.type == RIGHT_PAREN && checkLast->value.type == SEMI_COLON){
+				break;
+			}
+
+			currentType = cur_node->value.type;
+			if (currentType == LEFT_PAREN){
+				left_paren_Count++;
+				cur_node = cur_node->next;
+				currentType = cur_node->value.type;
+			}
+			else {
+				return result;
+			}
+
+			if (currentType == LEFT_PAREN){
+				left_paren_Count++;
+				int pCount = 1;
+				cur_node = cur_node->next;
+				while (cur_node != NULL && pCount != 0){
+					cur_node = cur_node->next;
+					if (cur_node->value.type == LEFT_PAREN){
+						left_paren_Count++;
+						pCount++;
+					}
+					if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+						cur_node = cur_node->next;
+						right_paren_Count++;
+						pCount--;
+					}
+				}
+				if (cur_node == NULL)
+					return result;
+			}
+
+			if (currentType == LEFT_PAREN){
+				left_paren_Count++;
+				int pCount = 1;
+				cur_node = cur_node->next;
+				while (cur_node != NULL && pCount != 0){
+					cur_node = cur_node->next;
+					if (cur_node->value.type == LEFT_PAREN){
+						left_paren_Count++;
+						pCount++;
+					}
+					if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+						cur_node = cur_node->next;
+						right_paren_Count++;
+						pCount--;
+					}
+				}
+				if (cur_node == NULL)
+					return result;
+			}
+
+			currentType = cur_node->value.type;
+			if (currentType == RIGHT_PAREN){
+				right_paren_Count++;
+				cur_node = cur_node->next;
+				if (cur_node->value.type == SEMI_COLON){
+					cur_node = cur_node->next;
+				}
+			}
+			else {
+				return result;
+			}
+
+			if (cur_node == NULL){
+				return result;
+			}
+		}
+	}
+	
 
 	currentType = cur_node->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction

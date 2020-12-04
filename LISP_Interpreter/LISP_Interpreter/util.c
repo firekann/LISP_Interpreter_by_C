@@ -32,6 +32,7 @@ T_OBJ call_fn() {
 	else if (tmp_node->value.type == RIGHT_INEQUAL_SAME_SIGN) return fn_right_inequal_same();
 	else if (tmp_node->value.type == STRINGP) return fn_stringp();
 	else if (tmp_node->value.type == IF) return fn_if();
+	else if (tmp_node->value.type == COND) return fn_cond();
 	else return;
 }
 

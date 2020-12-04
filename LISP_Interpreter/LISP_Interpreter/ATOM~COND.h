@@ -22,5 +22,6 @@ T_OBJ fn_left_inequal_same();
 T_OBJ fn_right_inequal_same();
 T_OBJ fn_stringp();
 T_OBJ fn_if();
+T_OBJ fn_cond();
 
 #endif
