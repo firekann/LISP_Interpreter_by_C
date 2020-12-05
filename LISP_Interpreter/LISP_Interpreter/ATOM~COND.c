@@ -5,6 +5,8 @@
 #include <string.h>
 #include "c_dictionary.h"
 
+/* ATOM, NULL, NUMBERP, ZEROP, MINUSP, EQUAL, <, >, <=, >=, STRINGP, IF, COND function */
+
 T_OBJ fn_atom(){ // ATOM function
 	T_OBJ result;
 	result.type = BOOLEAN;
@@ -14,25 +16,29 @@ T_OBJ fn_atom(){ // ATOM function
 		left_paren_Count++;
 		cur_node = cur_node->next;
 	}
-	else {
-		printf("ERROR : NO LEFT_PAREN FOR ATOM\n");
+	else{
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
 	}
 
 	if (cur_node->value.type == ATOM){ // check instruction ATOM
 		if (!strcmp(cur_node->value.t_string, "ATOM"))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION ATOM\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION ATOM\n");
 		return result;
+	}
 
 	int currentType = cur_node->value.type; // save the value's type
 
-	if (currentType == LEFT_PAREN){
+	if (currentType == LEFT_PAREN){ // meet left paren
 		LIST_NODE *check = cur_node->next;
-		if (check->value.type == IDENT){
+		if (check->value.type == IDENT){ // if next type is ident, it is list
 			left_paren_Count++;
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN){
 				cur_node = cur_node->next;
@@ -45,8 +51,9 @@ T_OBJ fn_atom(){ // ATOM function
 			result.type = T_LIST;
 			return result;
 		}
-		T_OBJ retValue = call_fn();
-		if (retValue.type == T_LIST){
+
+		T_OBJ retValue = call_fn(); // if next type is not ident, it means a instruction. Call function
+		if (retValue.type == T_LIST){ // if next type is list, should return NIL
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -57,7 +64,7 @@ T_OBJ fn_atom(){ // ATOM function
 			}
 			return result;
 		}
-		else if (retValue.t_bool == false){
+		else if (retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -66,8 +73,10 @@ T_OBJ fn_atom(){ // ATOM function
 					break;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
 	}
 	else if (currentType == INT || currentType == FLOAT || currentType == STRING || currentType == NIL){ // check whether it is symbol
@@ -91,8 +100,10 @@ T_OBJ fn_atom(){ // ATOM function
 			else
 				cur_node = cur_node->next;
 		}
-		else
+		else{
+			printf("ERROR : Syntax Error\n");
 			return result;
+		}
 	}
 	else if (currentType == IDENT){ // if current type is double quote
 		if (has_dict_key(dict, cur_node->value.t_string)){
@@ -106,8 +117,10 @@ T_OBJ fn_atom(){ // ATOM function
 		else
 			cur_node = cur_node->next;
 	}
-	else
+	else{
+		printf("ERROR : Syntax Error\n");
 		return result;
+	}
 
 	currentType = cur_node->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
@@ -117,10 +130,7 @@ T_OBJ fn_atom(){ // ATOM function
 			result.t_bool = true;
 			return result;
 		}
-		if (ifFlag){
-			result.t_bool = true;
-			return result;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
@@ -136,29 +146,33 @@ T_OBJ fn_null(){ // NULL function
 		cur_node = cur_node->next;
 	}
 	else {
-		printf("ERROR : NO LEFT_PAREN FOR NULL\n");
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
 	}
 
 	if (cur_node->value.type == L_NULL){ // check instruction NULL
 		if (!strcmp(cur_node->value.t_string, "NULL"))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION NULL\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION NULL\n");
 		return result;
+	}
 
 	int currentType = cur_node->value.type; // save the value's type
 
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
+		T_OBJ retValue = call_fn(); // Call function
 
-		if (retValue.t_bool != false){
+		if (retValue.t_bool != false){ // if return value is true, continue
 			cur_node = cur_node->next;
 			return result;
 		}			
-		else if (retValue.t_bool == false){
+		else if (retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -167,8 +181,10 @@ T_OBJ fn_null(){ // NULL function
 					break;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
 	}
 	else if (currentType == NIL) // currentType is NIL
@@ -180,13 +196,13 @@ T_OBJ fn_null(){ // NULL function
 				cur_node = cur_node->next;
 			}
 			else
-				return result;
+				return result; // not NIL
 		}
 		else
-			return result;
+			return result; // not NIL
 	}
 	else
-		return result;
+		return result; // not NIL
 
 	currentType = cur_node->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
@@ -196,16 +212,13 @@ T_OBJ fn_null(){ // NULL function
 			result.t_bool = true;
 			return result;
 		}
-		if (ifFlag){
-			result.t_bool = true;
-			return result;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
 }
 
-T_OBJ fn_numberp(){
+T_OBJ fn_numberp(){ // NUMBERP function
 	T_OBJ result;
 	result.type = BOOLEAN;
 	result.t_bool = false;
@@ -214,26 +227,32 @@ T_OBJ fn_numberp(){
 		left_paren_Count++;
 		cur_node = cur_node->next;
 	}
-	else
+	else{
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
+	}
 
-	if (cur_node->value.type == NUMBERP){ // check instruction NULL
+	if (cur_node->value.type == NUMBERP){ // check instruction NUMBERP
 		if (!strcmp(cur_node->value.t_string, "NUMBERP"))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION NUBMERP\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION NUMBERP\n");
 		return result;
+	}
 
-	int currentType = cur_node->value.type;
+	int currentType = cur_node->value.type; // save the value's type
 
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT || retValue.type == FLOAT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT || retValue.type == FLOAT){ // if return value is INT or FLOAT, continue
 		}
 		else{
-			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
 					cur_node = cur_node->next;
@@ -241,8 +260,10 @@ T_OBJ fn_numberp(){
 					break;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
 	}
 	else if (currentType == FLOAT || currentType == INT){ // if type is FLOAT or INT
@@ -255,13 +276,13 @@ T_OBJ fn_numberp(){
 				cur_node = cur_node->next;
 			}
 			else
-				return result;
+				return result; // not number
 		}
 		else
-			return result;
+			return result; // not number
 	}
 	else
-		return result;
+		return result; // not number
 
 	currentType = cur_node->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
@@ -271,16 +292,13 @@ T_OBJ fn_numberp(){
 			result.t_bool = true;
 			return result;
 		}
-		if (ifFlag){
-			result.t_bool = true;
-			return result;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
 }
 
-T_OBJ fn_zerop(){
+T_OBJ fn_zerop(){ // ZEROP function
 	T_OBJ result;
 	result.type = BOOLEAN;
 	result.t_bool = false;
@@ -289,36 +307,42 @@ T_OBJ fn_zerop(){
 		left_paren_Count++;
 		cur_node = cur_node->next;
 	}
-	else
+	else {
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
+	}
 
 	if (cur_node->value.type == ZEROP){ // check instruction ZEROP
 		if (!strcmp(cur_node->value.t_string, "ZEROP"))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION ZEROP\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION ZEROP\n");
 		return result;
+	}
 
 	int currentType = cur_node->value.type;
 
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT, check whether it is zero
 			if (retValue.t_int != 0)
 				return result;
 		} 
-		else if (retValue.type == FLOAT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT, check whether it is zero
 			if (retValue.t_float != 0)
 				return result;
 		}
 		else if (retValue.type == IDENT){
 			if (has_dict_key(dict, retValue.t_string)){
 				T_OBJ data = get_dict_obj(dict, retValue.t_string);
-				if (data.type == INT && data.t_int == 0){ // if type is FLOAT or INT
+				if (data.type == INT && data.t_int == 0){ // if type is INT and value is 0
 				}
-				else if (data.type == FLOAT && data.t_float == 0){
+				else if (data.type == FLOAT && data.t_float == 0){ // if type is FLOAT and value is 0
 				}
 				else
 					return result;
@@ -326,7 +350,7 @@ T_OBJ fn_zerop(){
 			else
 				return result;
 		}
-		else{
+		else{ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -335,8 +359,10 @@ T_OBJ fn_zerop(){
 					break;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
 	}
 	else if (currentType == INT){ // if type is INT
@@ -347,7 +373,6 @@ T_OBJ fn_zerop(){
 	}
 	else if (currentType == FLOAT){ // if type is FLOAT		
 		if (cur_node->value.t_float == 0)
-			//if (ABS(0 - atof(cur_node->value.t_string) < epsilon)) // value is 0
 			cur_node = cur_node->next;
 		else
 			return result;
@@ -382,16 +407,13 @@ T_OBJ fn_zerop(){
 			result.t_bool = true;
 			return result;
 		}
-		if (ifFlag){
-			result.t_bool = true;
-			return result;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
 }
 
-T_OBJ fn_minusp(){
+T_OBJ fn_minusp(){ // MINUSP function
 	T_OBJ result;
 	result.type = BOOLEAN;
 	result.t_bool = false;
@@ -401,32 +423,36 @@ T_OBJ fn_minusp(){
 		cur_node = cur_node->next;
 	}
 	else {
-		printf("ERROR : NO LEFT_PAREN FOR ATOM\n");
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
 	}
 
 	if (cur_node->value.type == MINUSP){ // check instruction MINUSP
 		if (!strcmp(cur_node->value.t_string, "MINUSP"))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION NULL\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION NULL\n");
 		return result;
+	}
 
-	int currentType = cur_node->value.type;
+	int currentType = cur_node->value.type; // save the value's type
 
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT, check whether value is bigger than 0
 			if (retValue.t_int >= 0)
 				return result;
 		}
-		else if (retValue.type == FLOAT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT, check whether value is bigger than 0
 			if (retValue.t_float >= 0)
 				return result;
 		}
-		else {
+		else { // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -435,19 +461,20 @@ T_OBJ fn_minusp(){
 					break;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
 	}
 	else if (currentType == INT){ // if type is INT
-		if (cur_node->value.t_int < 0) // value is 0
+		if (cur_node->value.t_int < 0) // value is smaller than 0
 			cur_node = cur_node->next;
 		else
 			return result;
 	}
 	else if (currentType == FLOAT){ // if type is FLOAT		
-		if (cur_node->value.t_float < 0)
-			//if (ABS(0 - atof(cur_node->value.t_string) < epsilon)) // value is 0
+		if (cur_node->value.t_float < 0) // value is smaller than 0
 			cur_node = cur_node->next;
 		else
 			return result;
@@ -456,25 +483,25 @@ T_OBJ fn_minusp(){
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			if (data.type == INT){ // if type is INT
-				if (data.t_int < 0) // value is 0
+				if (data.t_int < 0) // value is smaller than 0
 					cur_node = cur_node->next;
 				else
 					return result;
 			}
 			else if (data.type == FLOAT){ // if type is FLOAT
-				if (data.t_float < 0) // value is 0
+				if (data.t_float < 0) // value is smaller than 0
 					cur_node = cur_node->next;
 				else
 					return result;
 			}
 			else
-				return result;
+				return result; // NOT INT or FLOAT
 		}
 		else
-			return result;
+			return result; // NOT INT or FLOAT
 	}
 	else
-		return result;
+		return result; // NOT INT or FLOAT
 
 	currentType = cur_node->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
@@ -484,16 +511,13 @@ T_OBJ fn_minusp(){
 			result.t_bool = true;
 			return result;
 		}
-		if (ifFlag){
-			result.t_bool = true;
-			return result;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
 }
 
-T_OBJ fn_equal(){
+T_OBJ fn_equal(){ // EQUAL function
 	T_OBJ result;
 	result.type = BOOLEAN;
 	result.t_bool = false;
@@ -502,48 +526,56 @@ T_OBJ fn_equal(){
 		left_paren_Count++;
 		cur_node = cur_node->next;
 	}
-	else
+	else{
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
+	}
+
 
 	if (cur_node->value.type == EQUAL){ // check instruction EQUAL
 		if (!strcmp(cur_node->value.t_string, "EQUAL"))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION EQUAL\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION EQUAL\n");
 		return result;
+	}
 
-	int beforeType;
-	int intValue;
-	float floatValue;
-	bool boolValue;
-	char stringValue[MAX_COMMAND_LEN];
 
-	int currentType = cur_node->value.type;
+	int beforeType; // to save before node's type
+	int intValue; // to save before node's value
+	float floatValue; // to save before node's value
+	bool boolValue; // to save before node's value
+	char stringValue[MAX_COMMAND_LEN]; // to save before node's value
 
-	// first attribute
+	int currentType = cur_node->value.type; // save the value's type
+
+	// first attribute, save to beforeType for comparision
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT 
 			beforeType = retValue.type;
 			intValue = retValue.t_int;
 		}
-		else if (retValue.type == FLOAT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT
 			beforeType = retValue.type;
 			floatValue = retValue.t_float;
 		}
-		else if (retValue.type == NIL){ // if type is NIL
+		else if (retValue.type == NIL){ // if return type is NIL
 			beforeType = retValue.type;
 		}
-		else if (retValue.type == STRING){ // if type is STRING
+		else if (retValue.type == STRING){ // if return type is STRING
 			beforeType = retValue.type;
 			strcpy(stringValue, cur_node->value.t_string);
 		}
-		else if (retValue.type == BOOLEAN){
+		else if (retValue.type == BOOLEAN){ // if return type is BOOLEAN
 			beforeType = retValue.type;
 			boolValue = retValue.t_bool;
-			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 				beforeType = NIL;
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -552,29 +584,31 @@ T_OBJ fn_equal(){
 					break;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
-		else if (retValue.type == IDENT){
+		else if (retValue.type == IDENT){ // if return type is IDENT
 			if (has_dict_key(dict, retValue.t_string)){
 				T_OBJ data = get_dict_obj(dict, retValue.t_string);
 				currentType = data.type;
-				if (currentType == INT){ // if type is INT
+				if (currentType == INT){ // if currentType is INT
 					beforeType = currentType;
 					intValue = data.t_int;
 				}
-				else if (currentType == FLOAT){ // if type is FLOAT
+				else if (currentType == FLOAT){ // if currentType is FLOAT
 					beforeType = currentType;
 					floatValue = data.t_float;
 				}
-				else if (currentType == NIL){ // if type is NIL
+				else if (currentType == NIL){ // if currentType is NIL
 					beforeType = currentType;
 				}
-				else if (currentType == STRING){ // if type is STRING
+				else if (currentType == STRING){ // if currentType is STRING
 					beforeType = currentType;
 					strcpy(stringValue, data.t_string);
 				}
-				else if (currentType == BOOLEAN){
+				else if (currentType == BOOLEAN){ // if currentType is BOOLEAN
 					beforeType = currentType;
 					boolValue = data.t_bool;
 				}
@@ -584,7 +618,7 @@ T_OBJ fn_equal(){
 			else
 				return result;
 		}
-		else{
+		else{ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -593,48 +627,50 @@ T_OBJ fn_equal(){
 					break;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
 	}
-	else if (currentType == INT){ // if type is INT
+	else if (currentType == INT){ // if currentType is INT
 		beforeType = currentType;
 		intValue = cur_node->value.t_int;
 		cur_node = cur_node->next;
 	}
-	else if (currentType == FLOAT){ // if type is FLOAT
+	else if (currentType == FLOAT){ // if currentType is FLOAT
 		beforeType = currentType;
 		floatValue = cur_node->value.t_float;
 		cur_node = cur_node->next;
 	}
-	else if (currentType == NIL){ // if type is NIL
+	else if (currentType == NIL){ // if currentType is NIL
 		beforeType = currentType;
 		cur_node = cur_node->next;
 	}
-	else if (currentType == STRING){ // if type is STRING
+	else if (currentType == STRING){ // if currentType is STRING
 		beforeType = currentType;
 		strcpy(stringValue, cur_node->value.t_string);
 		cur_node = cur_node->next;
 	}
-	else if (currentType == IDENT){ // if type is IDENT	
+	else if (currentType == IDENT){ // if currentType is IDENT	
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			currentType = data.type;
-			if (currentType == INT){ // if type is INT
+			if (currentType == INT){ // if currentType is INT
 				beforeType = currentType;
 				intValue = data.t_int;
 				cur_node = cur_node->next;
 			}
-			else if (currentType == FLOAT){ // if type is FLOAT
+			else if (currentType == FLOAT){ // if currentType is FLOAT
 				beforeType = currentType;
 				floatValue = data.t_float;
 				cur_node = cur_node->next;
 			}
-			else if (currentType == NIL){ // if type is NIL
+			else if (currentType == NIL){ // if currentType is NIL
 				beforeType = currentType;
 				cur_node = cur_node->next;
 			}
-			else if (currentType == STRING){ // if type is STRING
+			else if (currentType == STRING){ // if currentType is STRING
 				beforeType = currentType;
 				strcpy(stringValue, data.t_string);
 				cur_node = cur_node->next;
@@ -650,35 +686,35 @@ T_OBJ fn_equal(){
 
 	currentType = cur_node->value.type;
 
-	// second attribute
+	// second attribute, compare with beforeType and value
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT
 			if (beforeType == retValue.type && intValue == retValue.t_int){
 			}
 			else
 				return result;
 		}
-		else if (retValue.type == FLOAT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT
 			if (beforeType == retValue.type && floatValue == retValue.t_float){
 			}
 			else
 				return result;
 		}
-		else if (retValue.type == NIL){ // if type is NIL
+		else if (retValue.type == NIL){ // if return type is NIL
 			if (beforeType == retValue.type){
 			}
 			else
 				return result;
 		}
-		else if (retValue.type == STRING){ // if type is STRING
+		else if (retValue.type == STRING){ // if return type is STRING
 			if (beforeType == retValue.type && !strcmp(stringValue, retValue.t_string)){
 			}
 			else
 				return result;
 		}
-		else if (retValue.type == BOOLEAN){
-			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+		else if (retValue.type == BOOLEAN){ // if return type is STRING
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
 					cur_node = cur_node->next;
@@ -695,7 +731,7 @@ T_OBJ fn_equal(){
 			else
 				return result;
 		}
-		else if (retValue.type == IDENT){
+		else if (retValue.type == IDENT){ // if return type is IDENT
 			if (has_dict_key(dict, retValue.t_string)){
 				T_OBJ data = get_dict_obj(dict, retValue.t_string);
 				currentType = data.type;
@@ -723,7 +759,7 @@ T_OBJ fn_equal(){
 					else
 						return result;
 				}
-				else if (retValue.type == BOOLEAN){
+				else if (currentType == BOOLEAN){ // if type is BOOLEAN
 					if (beforeType == retValue.type && boolValue == retValue.t_bool){
 					}
 					else
@@ -735,7 +771,7 @@ T_OBJ fn_equal(){
 			else
 				return result;
 		}
-		else{
+		else{ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -744,61 +780,63 @@ T_OBJ fn_equal(){
 					break;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
 	}
-	else if (currentType == INT){ // if type is INT
+	else if (currentType == INT){ // if currentType is INT
 		if (beforeType == currentType && intValue == cur_node->value.t_int){
 			cur_node = cur_node->next;
 		}
 		else
 			return result;
 	}
-	else if (currentType == FLOAT){ // if type is FLOAT
+	else if (currentType == FLOAT){ // if currentType is FLOAT
 		if (beforeType == currentType && floatValue == cur_node->value.t_float){
 			cur_node = cur_node->next;
 		}
 		else
 			return result;
 	}
-	else if (currentType == NIL){ // if type is NIL
+	else if (currentType == NIL){ // if currentType is NIL
 		if (beforeType == currentType)
 			cur_node = cur_node->next;
 		else
 			return result;
 	}
-	else if (currentType == STRING){ // if type is STRING		
+	else if (currentType == STRING){ // if currentType is STRING		
 		if (beforeType == currentType && !strcmp(stringValue, cur_node->value.t_string))
 			cur_node = cur_node->next;
 		else
 			return result;
 	}
-	else if (currentType == IDENT){ // if type is IDENT	
+	else if (currentType == IDENT){ // if currentType is IDENT	
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			currentType = data.type;
-			if (currentType == INT){ // if type is INT
+			if (currentType == INT){ // if currentType is INT
 				if (beforeType == currentType && intValue == data.t_int){
 					cur_node = cur_node->next;
 				}
 				else
 					return result;
 			}
-			else if (currentType == FLOAT){ // if type is FLOAT
+			else if (currentType == FLOAT){ // if currentType is FLOAT
 				if (beforeType == currentType && floatValue == data.t_float){
 					cur_node = cur_node->next;
 				}
 				else
 					return result;
 			}
-			else if (currentType == NIL){ // if type is NIL
+			else if (currentType == NIL){ // if currentType is NIL
 				if (beforeType == currentType)
 					cur_node = cur_node->next;
 				else
 					return result;
 			}
-			else if (currentType == STRING){ // if type is STRING		
+			else if (currentType == STRING){ // if currentType is STRING		
 				if (beforeType == currentType && !strcmp(stringValue, cur_node->value.t_string))
 					cur_node = cur_node->next;
 				else
@@ -821,16 +859,13 @@ T_OBJ fn_equal(){
 			result.t_bool = true;
 			return result;
 		}
-		if (ifFlag){
-			result.t_bool = true;
-			return result;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
 }
 
-T_OBJ fn_left_inequal(){
+T_OBJ fn_left_inequal(){ // > function
 	T_OBJ result;
 	result.type = BOOLEAN;
 	result.t_bool = false;
@@ -839,43 +874,49 @@ T_OBJ fn_left_inequal(){
 		left_paren_Count++;
 		cur_node = cur_node->next;
 	}
-	else
+	else{
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
+	}
 
 	if (cur_node->value.type == LEFT_INEQUAL_SIGN){ // check instruction LEFT_INEQUAL_SIGN
 		if (!strcmp(cur_node->value.t_string, ">"))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION >\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION >\n");
 		return result;
+	}
 
-	int currentType = cur_node->value.type;
-	int beforeType;
-	int intValue;
-	float floatValue;
+	int currentType = cur_node->value.type; // save the value's type
+	int beforeType; // to save before node's type
+	int intValue; // to save before node's value
+	float floatValue; // to save before node's value
 
-	// first attribute
+	// first attribute, save node to beforeType for comparision
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT
 			beforeType = retValue.type;
 			intValue = retValue.t_int;
 		}
-		else if (retValue.type == FLOAT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT
 			beforeType = retValue.type;
 			floatValue = retValue.t_float;
 		}
-		else if (retValue.type == IDENT){
+		else if (retValue.type == IDENT){ // if return type is IDENT
 			if (has_dict_key(dict, retValue.t_string)){
 				T_OBJ data = get_dict_obj(dict, retValue.t_string);
 				currentType = data.type;
-				if (currentType == INT){ // if type is INT
+				if (currentType == INT){ // if currentType is INT
 					beforeType = currentType;
 					intValue = data.t_int;
 				}
-				else if (currentType == FLOAT){ // if type is FLOAT
+				else if (currentType == FLOAT){ // if currentType is FLOAT
 					beforeType = currentType;
 					floatValue = data.t_float;
 				}
@@ -885,7 +926,7 @@ T_OBJ fn_left_inequal(){
 			else
 				return result;
 		}
-		else{
+		else{ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -897,26 +938,26 @@ T_OBJ fn_left_inequal(){
 			return result;
 		}
 	}
-	else if (currentType == INT){
+	else if (currentType == INT){ // if currentType is INT
 		beforeType = currentType;
 		intValue = cur_node->value.t_int;
 		cur_node = cur_node->next;
 	}
-	else if (currentType == FLOAT){ // if type is FLOAT
+	else if (currentType == FLOAT){ // if currentType is FLOAT
 		beforeType = currentType;
 		floatValue = cur_node->value.t_float;
 		cur_node = cur_node->next;
 	}
-	else if (currentType == IDENT){ // if type is IDENT	
+	else if (currentType == IDENT){ // if currentType is IDENT
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			currentType = data.type;
-			if (currentType == INT){ // if type is INT
+			if (currentType == INT){ // if currentType is INT
 				beforeType = currentType;
 				intValue = data.t_int;
 				cur_node = cur_node->next;
 			}
-			else if (currentType == FLOAT){ // if type is FLOAT
+			else if (currentType == FLOAT){ // if currentType is FLOAT
 				beforeType = currentType;
 				floatValue = data.t_float;
 				cur_node = cur_node->next;
@@ -930,17 +971,17 @@ T_OBJ fn_left_inequal(){
 
 	currentType = cur_node->value.type;
 
-	// second attribute
+	// second attribute, compare with beforeType
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
-			if (beforeType == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT
+			if (beforeType == INT){ // if beforeType is INT and before value is bigger than retValue
 				if (intValue > retValue.t_int){
 				}
 				else
 					return result;
 			}
-			else if (beforeType == FLOAT){
+			else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is bigger than retValue
 				if (floatValue > retValue.t_int){
 				}
 				else
@@ -949,14 +990,14 @@ T_OBJ fn_left_inequal(){
 			else
 				return result;
 		}
-		else if (retValue.type == FLOAT){
-			if (beforeType == INT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT
+			if (beforeType == INT){ // if beforeType is INT and before value is bigger than retValue
 				if (intValue > retValue.t_int){
 				}
 				else
 					return result;
 			}
-			else if (beforeType == FLOAT){
+			else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is bigger than retValue
 				if (floatValue > retValue.t_int){
 				}
 				else
@@ -965,18 +1006,18 @@ T_OBJ fn_left_inequal(){
 			else
 				return result;
 		}
-		else if (retValue.type == IDENT){
+		else if (retValue.type == IDENT){ // if return type is IDENT
 			if (has_dict_key(dict, retValue.t_string)){
 				T_OBJ data = get_dict_obj(dict, retValue.t_string);
 				currentType = data.type;
-				if (currentType == INT){ // if type is INT
-					if (beforeType == INT){
+				if (currentType == INT){ // if currentType is INT
+					if (beforeType == INT){ // if beforeType is INT and before value is bigger than retValue
 						if (intValue > data.t_int){
 						}
 						else
 							return result;
 					}
-					else if (beforeType == FLOAT){
+					else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is bigger than retValue
 						if (floatValue > data.t_int){
 						}
 						else
@@ -985,14 +1026,14 @@ T_OBJ fn_left_inequal(){
 					else
 						return result;
 				}
-				else if (currentType == FLOAT){ // if type is FLOAT
-					if (beforeType == INT){
+				else if (currentType == FLOAT){ // if currentType is FLOAT
+					if (beforeType == INT){ // if beforeType is INT and before value is bigger than retValue
 						if (intValue > data.t_int){
 						}
 						else
 							return result;
 					}
-					else if (beforeType == FLOAT){
+					else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is bigger than retValue
 						if (floatValue > data.t_int){
 						}
 						else
@@ -1007,7 +1048,7 @@ T_OBJ fn_left_inequal(){
 			else
 				return result;
 		}
-		else{
+		else{ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -1019,61 +1060,61 @@ T_OBJ fn_left_inequal(){
 			return result;
 		}
 	}
-	else if (currentType == INT){
-		if (beforeType == INT){
-			if (intValue > cur_node->value.t_int)
+	else if (currentType == INT){ // if currentType is INT
+		if (beforeType == INT){ // if beforeType is INT
+			if (intValue > cur_node->value.t_int) // check whether before value is bigger than current value
 				cur_node = cur_node->next;
 			else
 				return result;
 		}
-		else if (beforeType == FLOAT){
-			if (floatValue > cur_node->value.t_int)
-				cur_node = cur_node->next;
-			else
-				return result;
-		}
-	}
-	else if (currentType == FLOAT){ // if type is FLOAT
-		if (beforeType == INT){
-			if (intValue > cur_node->value.t_float)
-				cur_node = cur_node->next;
-			else
-				return result;
-		}
-		else if (beforeType == FLOAT){
-			if (floatValue > cur_node->value.t_float)
+		else if (beforeType == FLOAT){ // if beforeType is FLOAT
+			if (floatValue > cur_node->value.t_int) // check whether before value is bigger than current value
 				cur_node = cur_node->next;
 			else
 				return result;
 		}
 	}
-	else if (currentType == IDENT){ // if type is IDENT	
+	else if (currentType == FLOAT){ // if currentType is FLOAT
+		if (beforeType == INT){ // if beforeType is INT
+			if (intValue > cur_node->value.t_float) // check whether before value is bigger than current value
+				cur_node = cur_node->next;
+			else
+				return result;
+		}
+		else if (beforeType == FLOAT){ // if beforeType is FLOAT
+			if (floatValue > cur_node->value.t_float) // check whether before value is bigger than current value
+				cur_node = cur_node->next;
+			else
+				return result;
+		}
+	}
+	else if (currentType == IDENT){ // if currentType is IDENT	
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			currentType = data.type;
-			if (currentType == INT){
-				if (beforeType == INT){
-					if (intValue > data.t_int)
+			if (currentType == INT){ // if currentType is INT
+				if (beforeType == INT){ // if beforeType is INT
+					if (intValue > data.t_int) // check whether before value is bigger than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
-				else if (beforeType == FLOAT){
-					if (floatValue > data.t_int)
+				else if (beforeType == FLOAT){ // if beforeType is FLOAT
+					if (floatValue > data.t_int) // check whether before value is bigger than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
 			}
-			else if (currentType == FLOAT){ // if type is FLOAT
-				if (beforeType == INT){
-					if (intValue > data.t_float)
+			else if (currentType == FLOAT){ // if currentType is FLOAT
+				if (beforeType == INT){ // if beforeType is INT
+					if (intValue > data.t_float) // check whether before value is bigger than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
-				else if (beforeType == FLOAT){
-					if (floatValue > data.t_float)
+				else if (beforeType == FLOAT){ // if beforeType is FLOAT
+					if (floatValue > data.t_float) // check whether before value is bigger than current value
 						cur_node = cur_node->next;
 					else
 						return result;
@@ -1096,16 +1137,13 @@ T_OBJ fn_left_inequal(){
 			result.t_bool = true;
 			return result;
 		}
-		if (ifFlag){
-			result.t_bool = true;
-			return result;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
 }
 
-T_OBJ fn_right_inequal(){
+T_OBJ fn_right_inequal(){ // < function
 	T_OBJ result;
 	result.type = BOOLEAN;
 	result.t_bool = false;
@@ -1114,43 +1152,49 @@ T_OBJ fn_right_inequal(){
 		left_paren_Count++;
 		cur_node = cur_node->next;
 	}
-	else
+	else{
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
+	}
 
 	if (cur_node->value.type == RIGHT_INEQUAL_SIGN){ // check instruction RIGHT_INEQUAL_SIGN
 		if (!strcmp(cur_node->value.t_string, "<"))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION <\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION <\n");
 		return result;
+	}
 
-	int currentType = cur_node->value.type;
-	int beforeType;
-	int intValue;
-	float floatValue;
+	int currentType = cur_node->value.type; // save the value's type
+	int beforeType; // to save before node's type
+	int intValue; // to save before node's value
+	float floatValue; // to save before node's value
 
-	// first attribute
+	// first attribute, save node to beforeType for comparision
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT
 			beforeType = retValue.type;
 			intValue = retValue.t_int;
 		}
-		else if (retValue.type == FLOAT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT
 			beforeType = retValue.type;
 			floatValue = retValue.t_float;
 		}
-		else if (retValue.type == IDENT){
+		else if (retValue.type == IDENT){ // if return type is IDENT
 			if (has_dict_key(dict, retValue.t_string)){
 				T_OBJ data = get_dict_obj(dict, retValue.t_string);
 				currentType = data.type;
-				if (currentType == INT){ // if type is INT
+				if (currentType == INT){ // if currentType is INT
 					beforeType = currentType;
 					intValue = data.t_int;
 				}
-				else if (currentType == FLOAT){ // if type is FLOAT
+				else if (currentType == FLOAT){ // if currentType is FLOAT
 					beforeType = currentType;
 					floatValue = data.t_float;
 				}
@@ -1160,7 +1204,7 @@ T_OBJ fn_right_inequal(){
 			else
 				return result;
 		}
-		else{
+		else{ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -1172,26 +1216,26 @@ T_OBJ fn_right_inequal(){
 			return result;
 		}
 	}
-	else if (currentType == INT){
+	else if (currentType == INT){ // if currentType is INT
 		beforeType = currentType;
 		intValue = cur_node->value.t_int;
 		cur_node = cur_node->next;
 	}
-	else if (currentType == FLOAT){ // if type is FLOAT
+	else if (currentType == FLOAT){ // if currentType is FLOAT
 		beforeType = currentType;
 		floatValue = cur_node->value.t_float;
 		cur_node = cur_node->next;
 	}
-	else if (currentType == IDENT){ // if type is IDENT	
+	else if (currentType == IDENT){ // if currentType is IDENT
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			currentType = data.type;
-			if (currentType == INT){ // if type is INT
+			if (currentType == INT){ // if currentType is INT
 				beforeType = currentType;
 				intValue = data.t_int;
 				cur_node = cur_node->next;
 			}
-			else if (currentType == FLOAT){ // if type is FLOAT
+			else if (currentType == FLOAT){ // if currentType is FLOAT
 				beforeType = currentType;
 				floatValue = data.t_float;
 				cur_node = cur_node->next;
@@ -1205,17 +1249,17 @@ T_OBJ fn_right_inequal(){
 
 	currentType = cur_node->value.type;
 
-	// second attribute
+	// second attribute, compare with beforeType
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
-			if (beforeType == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT
+			if (beforeType == INT){ // if beforeType is INT and before value is smaller than retValue
 				if (intValue < retValue.t_int){
 				}
 				else
 					return result;
 			}
-			else if (beforeType == FLOAT){
+			else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is smaller than retValue
 				if (floatValue < retValue.t_int){
 				}
 				else
@@ -1224,14 +1268,14 @@ T_OBJ fn_right_inequal(){
 			else
 				return result;
 		}
-		else if (retValue.type == FLOAT){
-			if (beforeType == INT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT
+			if (beforeType == INT){ // if beforeType is INT and before value is smaller than retValue
 				if (intValue < retValue.t_int){
 				}
 				else
 					return result;
 			}
-			else if (beforeType == FLOAT){
+			else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is smaller than retValue
 				if (floatValue < retValue.t_int){
 				}
 				else
@@ -1240,18 +1284,18 @@ T_OBJ fn_right_inequal(){
 			else
 				return result;
 		}
-		else if (retValue.type == IDENT){
+		else if (retValue.type == IDENT){ // if return type is IDENT
 			if (has_dict_key(dict, retValue.t_string)){
 				T_OBJ data = get_dict_obj(dict, retValue.t_string);
 				currentType = data.type;
-				if (currentType == INT){ // if type is INT
-					if (beforeType == INT){
+				if (currentType == INT){ // if currentType is INT
+					if (beforeType == INT){ // if beforeType is INT and before value is smaller than retValue
 						if (intValue < data.t_int){
 						}
 						else
 							return result;
 					}
-					else if (beforeType == FLOAT){
+					else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is smaller than retValue
 						if (floatValue < data.t_int){
 						}
 						else
@@ -1260,14 +1304,14 @@ T_OBJ fn_right_inequal(){
 					else
 						return result;
 				}
-				else if (currentType == FLOAT){ // if type is FLOAT
-					if (beforeType == INT){
+				else if (currentType == FLOAT){ // if currentType is FLOAT
+					if (beforeType == INT){ // if beforeType is INT and before value is smaller than retValue
 						if (intValue < data.t_int){
 						}
 						else
 							return result;
 					}
-					else if (beforeType == FLOAT){
+					else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is smaller than retValue
 						if (floatValue < data.t_int){
 						}
 						else
@@ -1282,7 +1326,7 @@ T_OBJ fn_right_inequal(){
 			else
 				return result;
 		}
-		else{
+		else{ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -1294,61 +1338,61 @@ T_OBJ fn_right_inequal(){
 			return result;
 		}
 	}
-	else if (currentType == INT){
-		if (beforeType == INT){
-			if (intValue < cur_node->value.t_int)
+	else if (currentType == INT){ // if currentType is INT
+		if (beforeType == INT){ // if beforeType is INT
+			if (intValue < cur_node->value.t_int) // check whether before value is smaller than current value
 				cur_node = cur_node->next;
 			else
 				return result;
 		}
-		else if (beforeType == FLOAT){
-			if (floatValue < cur_node->value.t_int)
-				cur_node = cur_node->next;
-			else
-				return result;
-		}
-	}
-	else if (currentType == FLOAT){ // if type is FLOAT
-		if (beforeType == INT){
-			if (intValue < cur_node->value.t_float)
-				cur_node = cur_node->next;
-			else
-				return result;
-		}
-		else if (beforeType == FLOAT){
-			if (floatValue < cur_node->value.t_float)
+		else if (beforeType == FLOAT){ // if beforeType is FLOAT
+			if (floatValue < cur_node->value.t_int) // check whether before value is smaller than current value
 				cur_node = cur_node->next;
 			else
 				return result;
 		}
 	}
-	else if (currentType == IDENT){ // if type is IDENT	
+	else if (currentType == FLOAT){ // if currentType is FLOAT
+		if (beforeType == INT){ // if beforeType is INT
+			if (intValue < cur_node->value.t_float) // check whether before value is smaller than current value
+				cur_node = cur_node->next;
+			else
+				return result;
+		}
+		else if (beforeType == FLOAT){ // if beforeType is FLOAT
+			if (floatValue < cur_node->value.t_float) // check whether before value is smaller than current value
+				cur_node = cur_node->next;
+			else
+				return result;
+		}
+	}
+	else if (currentType == IDENT){ // if currentType is IDENT	
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			currentType = data.type;
-			if (currentType == INT){
-				if (beforeType == INT){
-					if (intValue < data.t_int)
+			if (currentType == INT){ // if currentType is INT
+				if (beforeType == INT){ // if beforeType is INT
+					if (intValue < data.t_int) // check whether before value is smaller than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
-				else if (beforeType == FLOAT){
-					if (floatValue < data.t_int)
+				else if (beforeType == FLOAT){ // if beforeType is FLOAT
+					if (floatValue < data.t_int) // check whether before value is smaller than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
 			}
-			else if (currentType == FLOAT){ // if type is FLOAT
-				if (beforeType == INT){
-					if (intValue < data.t_float)
+			else if (currentType == FLOAT){ // if beforeType is FLOAT
+				if (beforeType == INT){// if beforeType is INT
+					if (intValue < data.t_float) // check whether before value is smaller than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
-				else if (beforeType == FLOAT){
-					if (floatValue < data.t_float)
+				else if (beforeType == FLOAT){ // if beforeType is FLOAT
+					if (floatValue < data.t_float) // check whether before value is smaller than current value
 						cur_node = cur_node->next;
 					else
 						return result;
@@ -1371,16 +1415,13 @@ T_OBJ fn_right_inequal(){
 			result.t_bool = true;
 			return result;
 		}
-		if (ifFlag){
-			result.t_bool = true;
-			return result;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
 }
 
-T_OBJ fn_left_inequal_same(){
+T_OBJ fn_left_inequal_same(){ // >= function
 	T_OBJ result;
 	result.type = BOOLEAN;
 	result.t_bool = false;
@@ -1389,43 +1430,49 @@ T_OBJ fn_left_inequal_same(){
 		left_paren_Count++;
 		cur_node = cur_node->next;
 	}
-	else
+	else{
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
+	}
 
 	if (cur_node->value.type == LEFT_INEQUAL_SAME_SIGN){ // check instruction LEFT_INEQUAL_SAME_SIGN
 		if (!strcmp(cur_node->value.t_string, ">="))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION >=\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION >=\n");
 		return result;
+	}
 
-	int currentType = cur_node->value.type;
-	int beforeType;
-	int intValue;
-	float floatValue;
+	int currentType = cur_node->value.type; // save the value's type
+	int beforeType; // to save before node's type
+	int intValue; // to save before node's value
+	float floatValue; // to save before node's value
 
-	// first attribute
+	// first attribute, save node to beforeType for comparision
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT
 			beforeType = retValue.type;
 			intValue = retValue.t_int;
 		}
-		else if (retValue.type == FLOAT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT
 			beforeType = retValue.type;
 			floatValue = retValue.t_float;
 		}
-		else if (retValue.type == IDENT){
+		else if (retValue.type == IDENT){ // if return type is IDENT
 			if (has_dict_key(dict, retValue.t_string)){
 				T_OBJ data = get_dict_obj(dict, retValue.t_string);
 				currentType = data.type;
-				if (currentType == INT){ // if type is INT
+				if (currentType == INT){ // if currentType is INT
 					beforeType = currentType;
 					intValue = data.t_int;
 				}
-				else if (currentType == FLOAT){ // if type is FLOAT
+				else if (currentType == FLOAT){ // if currentType is FLOAT
 					beforeType = currentType;
 					floatValue = data.t_float;
 				}
@@ -1435,7 +1482,7 @@ T_OBJ fn_left_inequal_same(){
 			else
 				return result;
 		}
-		else{
+		else{ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -1447,26 +1494,26 @@ T_OBJ fn_left_inequal_same(){
 			return result;
 		}
 	}
-	else if (currentType == INT){
+	else if (currentType == INT){ // if currentType is INT
 		beforeType = currentType;
 		intValue = cur_node->value.t_int;
 		cur_node = cur_node->next;
 	}
-	else if (currentType == FLOAT){ // if type is FLOAT
+	else if (currentType == FLOAT){ // if currentType is FLOAT
 		beforeType = currentType;
 		floatValue = cur_node->value.t_float;
 		cur_node = cur_node->next;
 	}
-	else if (currentType == IDENT){ // if type is IDENT	
+	else if (currentType == IDENT){ // if currentType is IDENT
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			currentType = data.type;
-			if (currentType == INT){ // if type is INT
+			if (currentType == INT){ // if currentType is INT
 				beforeType = currentType;
 				intValue = data.t_int;
 				cur_node = cur_node->next;
 			}
-			else if (currentType == FLOAT){ // if type is FLOAT
+			else if (currentType == FLOAT){ // if currentType is FLOAT
 				beforeType = currentType;
 				floatValue = data.t_float;
 				cur_node = cur_node->next;
@@ -1480,17 +1527,17 @@ T_OBJ fn_left_inequal_same(){
 
 	currentType = cur_node->value.type;
 
-	// second attribute
+	// second attribute, compare with beforeType
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
-			if (beforeType == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT
+			if (beforeType == INT){ // if beforeType is INT and before value is same or bigger than retValue
 				if (intValue >= retValue.t_int){
 				}
 				else
 					return result;
 			}
-			else if (beforeType == FLOAT){
+			else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is same or bigger than retValue
 				if (floatValue >= retValue.t_int){
 				}
 				else
@@ -1499,14 +1546,14 @@ T_OBJ fn_left_inequal_same(){
 			else
 				return result;
 		}
-		else if (retValue.type == FLOAT){
-			if (beforeType == INT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT
+			if (beforeType == INT){ // if beforeType is INT and before value is same or bigger than retValue
 				if (intValue >= retValue.t_int){
 				}
 				else
 					return result;
 			}
-			else if (beforeType == FLOAT){
+			else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is same or bigger than retValue
 				if (floatValue >= retValue.t_int){
 				}
 				else
@@ -1515,18 +1562,18 @@ T_OBJ fn_left_inequal_same(){
 			else
 				return result;
 		}
-		else if (retValue.type == IDENT){
+		else if (retValue.type == IDENT){ // if return type is IDENT
 			if (has_dict_key(dict, retValue.t_string)){
 				T_OBJ data = get_dict_obj(dict, retValue.t_string);
 				currentType = data.type;
-				if (currentType == INT){ // if type is INT
-					if (beforeType == INT){
+				if (currentType == INT){ // if currentType is INT
+					if (beforeType == INT){ // if beforeType is INT and before value is same or bigger than retValue
 						if (intValue >= data.t_int){
 						}
 						else
 							return result;
 					}
-					else if (beforeType == FLOAT){
+					else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is same or bigger than retValue
 						if (floatValue >= data.t_int){
 						}
 						else
@@ -1535,14 +1582,14 @@ T_OBJ fn_left_inequal_same(){
 					else
 						return result;
 				}
-				else if (currentType == FLOAT){ // if type is FLOAT
-					if (beforeType == INT){
+				else if (currentType == FLOAT){ // if currentType is FLOAT
+					if (beforeType == INT){ // if beforeType is INT and before value is same or bigger than retValue
 						if (intValue >= data.t_int){
 						}
 						else
 							return result;
 					}
-					else if (beforeType == FLOAT){
+					else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is same or bigger than retValue
 						if (floatValue >= data.t_int){
 						}
 						else
@@ -1557,7 +1604,7 @@ T_OBJ fn_left_inequal_same(){
 			else
 				return result;
 		}
-		else{
+		else{ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -1569,61 +1616,61 @@ T_OBJ fn_left_inequal_same(){
 			return result;
 		}
 	}
-	else if (currentType == INT){
-		if (beforeType == INT){
-			if (intValue >= cur_node->value.t_int)
+	else if (currentType == INT){ // if currentType is INT
+		if (beforeType == INT){ // if beforeType is INT
+			if (intValue >= cur_node->value.t_int) // check whether before value is same or bigger than current value
 				cur_node = cur_node->next;
 			else
 				return result;
 		}
-		else if (beforeType == FLOAT){
-			if (floatValue >= cur_node->value.t_int)
-				cur_node = cur_node->next;
-			else
-				return result;
-		}
-	}
-	else if (currentType == FLOAT){ // if type is FLOAT
-		if (beforeType == INT){
-			if (intValue >= cur_node->value.t_float)
-				cur_node = cur_node->next;
-			else
-				return result;
-		}
-		else if (beforeType == FLOAT){
-			if (floatValue >= cur_node->value.t_float)
+		else if (beforeType == FLOAT){ // if beforeType is FLOAT
+			if (floatValue >= cur_node->value.t_int) // check whether before value is same or bigger than current value
 				cur_node = cur_node->next;
 			else
 				return result;
 		}
 	}
-	else if (currentType == IDENT){ // if type is IDENT	
+	else if (currentType == FLOAT){ // if currentType is FLOAT
+		if (beforeType == INT){ // if beforeType is INT
+			if (intValue >= cur_node->value.t_float) // check whether before value is same or bigger than current value
+				cur_node = cur_node->next;
+			else
+				return result;
+		}
+		else if (beforeType == FLOAT){ // if beforeType is FLOAT
+			if (floatValue >= cur_node->value.t_float) // check whether before value is same or bigger than current value
+				cur_node = cur_node->next;
+			else
+				return result;
+		}
+	}
+	else if (currentType == IDENT){ // if beforeType is IDENT	
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			currentType = data.type;
-			if (currentType == INT){
-				if (beforeType == INT){
-					if (intValue >= data.t_int)
+			if (currentType == INT){ // if currentType is INT
+				if (beforeType == INT){ // if beforeType is INT
+					if (intValue >= data.t_int) // check whether before value is same or bigger than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
-				else if (beforeType == FLOAT){
-					if (floatValue >= data.t_int)
+				else if (beforeType == FLOAT){ // if beforeType is FLOAT
+					if (floatValue >= data.t_int) // check whether before value is same or bigger than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
 			}
-			else if (currentType == FLOAT){ // if type is FLOAT
-				if (beforeType == INT){
-					if (intValue >= data.t_float)
+			else if (currentType == FLOAT){ // if currentType is FLOAT
+				if (beforeType == INT){ // if beforeType is INT
+					if (intValue >= data.t_float) // check whether before value is same or bigger than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
-				else if (beforeType == FLOAT){
-					if (floatValue >= data.t_float)
+				else if (beforeType == FLOAT){ // if beforeType is FLOAT
+					if (floatValue >= data.t_float) // check whether before value is same or bigger than current value
 						cur_node = cur_node->next;
 					else
 						return result;
@@ -1646,16 +1693,13 @@ T_OBJ fn_left_inequal_same(){
 			result.t_bool = true;
 			return result;
 		}
-		if (ifFlag){
-			result.t_bool = true;
-			return result;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
 }
 
-T_OBJ fn_right_inequal_same(){
+T_OBJ fn_right_inequal_same(){ // <= function
 	T_OBJ result;
 	result.type = BOOLEAN;
 	result.t_bool = false;
@@ -1664,43 +1708,49 @@ T_OBJ fn_right_inequal_same(){
 		left_paren_Count++;
 		cur_node = cur_node->next;
 	}
-	else
+	else{
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
+	}
 
 	if (cur_node->value.type == RIGHT_INEQUAL_SAME_SIGN){ // check instruction RIGHT_INEQUAL_SAME_SIGN
 		if (!strcmp(cur_node->value.t_string, "<="))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION <=\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION <=\n");
 		return result;
+	}
 
-	int currentType = cur_node->value.type;
-	int beforeType;
-	int intValue;
-	float floatValue;
+	int currentType = cur_node->value.type; // save the value's type
+	int beforeType; // to save before node's type
+	int intValue; // to save before node's value
+	float floatValue; // to save before node's value
 
-	// first attribute
+	// first attribute, save node to beforeType for comparision
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT
 			beforeType = retValue.type;
 			intValue = retValue.t_int;
 		}
-		else if (retValue.type == FLOAT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT
 			beforeType = retValue.type;
 			floatValue = retValue.t_float;
 		}
-		else if (retValue.type == IDENT){
+		else if (retValue.type == IDENT){ // if return type is IDENT
 			if (has_dict_key(dict, retValue.t_string)){
 				T_OBJ data = get_dict_obj(dict, retValue.t_string);
 				currentType = data.type;
-				if (currentType == INT){ // if type is INT
+				if (currentType == INT){ // if currentType is INT
 					beforeType = currentType;
 					intValue = data.t_int;
 				}
-				else if (currentType == FLOAT){ // if type is FLOAT
+				else if (currentType == FLOAT){ // if currentType is FLOAT
 					beforeType = currentType;
 					floatValue = data.t_float;
 				}
@@ -1710,7 +1760,7 @@ T_OBJ fn_right_inequal_same(){
 			else
 				return result;
 		}
-		else{
+		else{ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -1722,26 +1772,26 @@ T_OBJ fn_right_inequal_same(){
 			return result;
 		}
 	}
-	else if (currentType == INT){
+	else if (currentType == INT){ // if currentType is INT
 		beforeType = currentType;
 		intValue = cur_node->value.t_int;
 		cur_node = cur_node->next;
 	}
-	else if (currentType == FLOAT){ // if type is FLOAT
+	else if (currentType == FLOAT){ // if currentType is FLOAT
 		beforeType = currentType;
 		floatValue = cur_node->value.t_float;
 		cur_node = cur_node->next;
 	}
-	else if (currentType == IDENT){ // if type is IDENT	
+	else if (currentType == IDENT){ // if currentType is IDENT
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			currentType = data.type;
-			if (currentType == INT){ // if type is INT
+			if (currentType == INT){ // if currentType is INT
 				beforeType = currentType;
 				intValue = data.t_int;
 				cur_node = cur_node->next;
 			}
-			else if (currentType == FLOAT){ // if type is FLOAT
+			else if (currentType == FLOAT){ // if currentType is FLOAT
 				beforeType = currentType;
 				floatValue = data.t_float;
 				cur_node = cur_node->next;
@@ -1755,17 +1805,17 @@ T_OBJ fn_right_inequal_same(){
 
 	currentType = cur_node->value.type;
 
-	// second attribute
+	// second attribute, compare with beforeType
 	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		if (retValue.type == INT){
-			if (beforeType == INT){
+		T_OBJ retValue = call_fn(); // Call function
+		if (retValue.type == INT){ // if return type is INT
+			if (beforeType == INT){ // if beforeType is INT and before value is same or smaller than retValue
 				if (intValue <= retValue.t_int){
 				}
 				else
 					return result;
 			}
-			else if (beforeType == FLOAT){
+			else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is same or smaller than retValue
 				if (floatValue <= retValue.t_int){
 				}
 				else
@@ -1774,14 +1824,14 @@ T_OBJ fn_right_inequal_same(){
 			else
 				return result;
 		}
-		else if (retValue.type == FLOAT){
-			if (beforeType == INT){
+		else if (retValue.type == FLOAT){ // if return type is FLOAT
+			if (beforeType == INT){ // if beforeType is INT and before value is same or smaller than retValue
 				if (intValue <= retValue.t_int){
 				}
 				else
 					return result;
 			}
-			else if (beforeType == FLOAT){
+			else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is same or smaller than retValue
 				if (floatValue <= retValue.t_int){
 				}
 				else
@@ -1790,18 +1840,18 @@ T_OBJ fn_right_inequal_same(){
 			else
 				return result;
 		}
-		else if (retValue.type == IDENT){
+		else if (retValue.type == IDENT){ // if return type is IDENT
 			if (has_dict_key(dict, retValue.t_string)){
 				T_OBJ data = get_dict_obj(dict, retValue.t_string);
 				currentType = data.type;
-				if (currentType == INT){ // if type is INT
-					if (beforeType == INT){
+				if (currentType == INT){ // if currentType is INT
+					if (beforeType == INT){ // if beforeType is INT and before value is same or smaller than retValue
 						if (intValue <= data.t_int){
 						}
 						else
 							return result;
 					}
-					else if (beforeType == FLOAT){
+					else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is same or smaller than retValue
 						if (floatValue <= data.t_int){
 						}
 						else
@@ -1810,14 +1860,14 @@ T_OBJ fn_right_inequal_same(){
 					else
 						return result;
 				}
-				else if (currentType == FLOAT){ // if type is FLOAT
-					if (beforeType == INT){
+				else if (currentType == FLOAT){ // if currentType is FLOAT
+					if (beforeType == INT){ // if beforeType is INT and before value is same or smaller than retValue
 						if (intValue <= data.t_int){
 						}
 						else
 							return result;
 					}
-					else if (beforeType == FLOAT){
+					else if (beforeType == FLOAT){ // if beforeType is FLOAT and before value is same or smaller than retValue
 						if (floatValue <= data.t_int){
 						}
 						else
@@ -1832,7 +1882,7 @@ T_OBJ fn_right_inequal_same(){
 			else
 				return result;
 		}
-		else{
+		else{ // move cur_node to end of corresponding instruction
 			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
@@ -1844,61 +1894,61 @@ T_OBJ fn_right_inequal_same(){
 			return result;
 		}
 	}
-	else if (currentType == INT){
-		if (beforeType == INT){
-			if (intValue <= cur_node->value.t_int)
+	else if (currentType == INT){ // if currentType is INT
+		if (beforeType == INT){ // if beforeType is INT
+			if (intValue <= cur_node->value.t_int) // check whether before value is same or smaller than current value
 				cur_node = cur_node->next;
 			else
 				return result;
 		}
-		else if (beforeType == FLOAT){
-			if (floatValue <= cur_node->value.t_int)
-				cur_node = cur_node->next;
-			else
-				return result;
-		}
-	}
-	else if (currentType == FLOAT){ // if type is FLOAT
-		if (beforeType == INT){
-			if (intValue <= cur_node->value.t_float)
-				cur_node = cur_node->next;
-			else
-				return result;
-		}
-		else if (beforeType == FLOAT){
-			if (floatValue <= cur_node->value.t_float)
+		else if (beforeType == FLOAT){ // if beforeType is FLOAT
+			if (floatValue <= cur_node->value.t_int) // check whether before value is same or smaller than current value
 				cur_node = cur_node->next;
 			else
 				return result;
 		}
 	}
-	else if (currentType == IDENT){ // if type is IDENT	
+	else if (currentType == FLOAT){// if currentType is FLOAT
+		if (beforeType == INT){ // if beforeType is INT
+			if (intValue <= cur_node->value.t_float) // check whether before value is same or smaller than current value
+				cur_node = cur_node->next;
+			else
+				return result;
+		}
+		else if (beforeType == FLOAT){ // if beforeType is FLOAT
+			if (floatValue <= cur_node->value.t_float) // check whether before value is same or smaller than current value
+				cur_node = cur_node->next;
+			else
+				return result;
+		}
+	}
+	else if (currentType == IDENT){ // if beforeType is IDENT
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			currentType = data.type;
-			if (currentType == INT){
-				if (beforeType == INT){
-					if (intValue <= data.t_int)
+			if (currentType == INT){ // if currentType is INT
+				if (beforeType == INT){ // if beforeType is INT
+					if (intValue <= data.t_int) // check whether before value is same or smaller than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
-				else if (beforeType == FLOAT){
-					if (floatValue <= data.t_int)
+				else if (beforeType == FLOAT){ // if beforeType is FLOAT
+					if (floatValue <= data.t_int) // check whether before value is same or smaller than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
 			}
-			else if (currentType == FLOAT){ // if type is FLOAT
-				if (beforeType == INT){
-					if (intValue <= data.t_float)
+			else if (currentType == FLOAT){ // if currentType is FLOAT
+				if (beforeType == INT){ // if beforeType is INT
+					if (intValue <= data.t_float) // check whether before value is same or smaller than current value
 						cur_node = cur_node->next;
 					else
 						return result;
 				}
-				else if (beforeType == FLOAT){
-					if (floatValue <= data.t_float)
+				else if (beforeType == FLOAT){ // if beforeType is FLOAT
+					if (floatValue <= data.t_float) // check whether before value is same or smaller than current value
 						cur_node = cur_node->next;
 					else
 						return result;
@@ -1921,16 +1971,13 @@ T_OBJ fn_right_inequal_same(){
 			result.t_bool = true;
 			return result;
 		}
-		if (ifFlag){
-			result.t_bool = true;
-			return result;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
 }
 
-T_OBJ fn_stringp(){
+T_OBJ fn_stringp(){ // STRINGP function
 	T_OBJ result;
 	result.type = BOOLEAN;
 	result.t_bool = false;
@@ -1939,23 +1986,29 @@ T_OBJ fn_stringp(){
 		left_paren_Count++;
 		cur_node = cur_node->next;
 	}
-	else
+	else{
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
+	}
 
 	if (cur_node->value.type == STRINGP){ // check instruction STRINGP
 		if (!strcmp(cur_node->value.t_string, "STRINGP"))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION STRINGP\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION STRINGP\n");
 		return result;
+	}
 	
 	int currentType = cur_node->value.type;
 
-	if (currentType == LEFT_PAREN){
-		T_OBJ retValue = call_fn();
-		while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+	if (currentType == LEFT_PAREN){ // if currentType is left_paren
+		T_OBJ retValue = call_fn(); // Call function
+		while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 			cur_node = cur_node->next;
 			if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
 				cur_node = cur_node->next;
@@ -1965,15 +2018,15 @@ T_OBJ fn_stringp(){
 		}
 		return result;
 	}
-	else if (currentType == STRING){
+	else if (currentType == STRING){ // if currentType is STRING
 		cur_node = cur_node->next;
 	}
-	else if (currentType == SQUOTE){
+	else if (currentType == SQUOTE){ // if currentType is single quote
 		cur_node = cur_node->next;
 		currentType = cur_node->value.type;
 		if (currentType == LEFT_PAREN){
-			T_OBJ retValue = call_fn();
-			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+			T_OBJ retValue = call_fn(); // Call function
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
 					cur_node = cur_node->next;
@@ -1983,14 +2036,14 @@ T_OBJ fn_stringp(){
 			}
 			return result;
 		}
-		else if (currentType == STRING){
+		else if (currentType == STRING){ // if currentType is STRING
 			cur_node = cur_node->next;
 		}
-		else if (currentType == IDENT){
+		else if (currentType == IDENT){ // if currentType is identifier
 			if (has_dict_key(dict, cur_node->value.t_string)){
 				T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 				currentType = data.type;
-				if (currentType == STRING){
+				if (currentType == STRING){ // if currentType is STRING
 					cur_node = cur_node->next;
 				}
 				else
@@ -2002,11 +2055,11 @@ T_OBJ fn_stringp(){
 		else
 			return result;
 	}
-	else if (currentType == IDENT){
+	else if (currentType == IDENT){ // if currentType is identifier
 		if (has_dict_key(dict, cur_node->value.t_string)){
 			T_OBJ data = get_dict_obj(dict, cur_node->value.t_string);
 			currentType = data.type;
-			if (currentType == STRING){
+			if (currentType == STRING){ // if currentType is STRING
 				cur_node = cur_node->next;
 			}
 			else
@@ -2026,16 +2079,13 @@ T_OBJ fn_stringp(){
 			result.t_bool = true;
 			return result;
 		}
-		if (ifFlag){
-			result.t_bool = true;
-			return result;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
 }
 
-T_OBJ fn_if(){
+T_OBJ fn_if(){ // IF function
 	T_OBJ result;
 	result.type = BOOLEAN;
 	result.t_bool = false;
@@ -2044,25 +2094,32 @@ T_OBJ fn_if(){
 		left_paren_Count++;
 		cur_node = cur_node->next;
 	}
-	else
+	else{
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
+	}
 
 	if (cur_node->value.type == IF){ // check instruction IF
 		if (!strcmp(cur_node->value.t_string, "IF"))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION IF\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION IF\n");
 		return result;
+	}
 
-	int currentType = cur_node->value.type;
-	int condition = false;
-	T_OBJ retValue;
+	int currentType = cur_node->value.type; // save the value's type
+	int condition = false; // check whether the condition part is ture
+	T_OBJ retValue; // to save the executive part
 
+	// condition part
 	if (currentType == LEFT_PAREN){
 		retValue = call_fn();
-		while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+		while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 			cur_node = cur_node->next;
 			if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
 				cur_node = cur_node->next;
@@ -2070,13 +2127,16 @@ T_OBJ fn_if(){
 				break;
 			}
 		}
-		if (cur_node == NULL)
+		if (cur_node == NULL){
+			printf("ERROR : Syntax Error\n");
 			return result;
+		}
 	}
 	else {
 		return result;
 	}
 
+	// check the retValue.type for set the condition
 	if (retValue.type == INT){
 		if (retValue.t_int == 0)
 			condition = false;
@@ -2096,10 +2156,12 @@ T_OBJ fn_if(){
 		condition = true;
 	}
 
+	// executive part with true condition
 	if (condition == true){
+		// practical part of execution
 		if (currentType == LEFT_PAREN){
-			retValue = call_fn();
-			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+			retValue = call_fn(); // Call function
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
 					cur_node = cur_node->next;
@@ -2113,11 +2175,13 @@ T_OBJ fn_if(){
 		else {
 			return result;
 		}
+
+		// ignore the part of execution for false condition 
 		if (currentType == LEFT_PAREN){
 			left_paren_Count++;
 			int pCount = 1;
 			cur_node = cur_node->next;
-			while (cur_node != NULL && pCount != 0){
+			while (cur_node != NULL && pCount != 0){ // move cur_node to end of corresponding instruction
 				cur_node = cur_node->next;
 				if (cur_node->value.type == LEFT_PAREN){
 					left_paren_Count++;
@@ -2136,12 +2200,14 @@ T_OBJ fn_if(){
 			return result;
 		}
 	}
+	// executive part with false condition
 	else if (condition == false){
+		// ignore the part of execution for true condition 
 		if (currentType == LEFT_PAREN){
 			left_paren_Count++;
 			int pCount = 1;
 			cur_node = cur_node->next;
-			while (cur_node != NULL && pCount != 0){
+			while (cur_node != NULL && pCount != 0){ // move cur_node to end of corresponding instruction
 				cur_node = cur_node->next;
 				if (cur_node->value.type == LEFT_PAREN){
 					left_paren_Count++;
@@ -2158,9 +2224,10 @@ T_OBJ fn_if(){
 		}
 		currentType = cur_node->value.type;
 
+		// practical part of execution
 		if (currentType == LEFT_PAREN){
-			retValue = call_fn();
-			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+			retValue = call_fn(); // Call function
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
 					cur_node = cur_node->next;
@@ -2187,15 +2254,13 @@ T_OBJ fn_if(){
 		if (cur_node->value.type == EOF || cur_node->value.type == SEMI_COLON || cur_node->value.type == RIGHT_PAREN || cur_node->value.type == LEFT_PAREN){
 			return retValue;
 		}
-		if (ifFlag){
-			return retValue;
-		}
+		right_paren_Count++;
 	}
 
 	return result;
 }
 
-T_OBJ fn_cond(){
+T_OBJ fn_cond(){ // COND function
 	T_OBJ result;
 	result.type = BOOLEAN;
 	result.t_bool = false;
@@ -2204,25 +2269,31 @@ T_OBJ fn_cond(){
 		left_paren_Count++;
 		cur_node = cur_node->next;
 	}
-	else
+	else{
+		printf("ERROR : NO LEFT_PAREN\n");
 		return result;
+	}
 
 	if (cur_node->value.type == COND){ // check instruction COND
 		if (!strcmp(cur_node->value.t_string, "COND"))
 			cur_node = cur_node->next;
-		else
+		else{
+			printf("ERROR : NO INSTRUCTION COND\n");
 			return result;
+		}
 	}
-	else
+	else{
+		printf("ERROR : NO INSTRUCTION COND\n");
 		return result;
+	}
 
-	int currentType;
+	int currentType; 
 	int condition = false;
 	T_OBJ retValue;
 
-	while (condition == false){
-		currentType = cur_node->value.type;
-		if (currentType == LEFT_PAREN){
+	while (condition == false){ // if condition is false, it will continue the loop
+		currentType = cur_node->value.type; // save the value's type
+		if (currentType == LEFT_PAREN){ // inside of current instruction 
 			left_paren_Count++;
 			cur_node = cur_node->next;
 			currentType = cur_node->value.type;
@@ -2231,9 +2302,10 @@ T_OBJ fn_cond(){
 			return result;
 		}
 
+		// condition part
 		if (currentType == LEFT_PAREN){
-			retValue = call_fn();
-			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+			retValue = call_fn(); // Call function
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
 					cur_node = cur_node->next;
@@ -2249,12 +2321,12 @@ T_OBJ fn_cond(){
 		}
 
 		currentType = cur_node->value.type;
-
-		if (retValue.t_bool == true){
+		// executive part
+		if (retValue.t_bool == true){ // if condition is true, it will be executed
 			condition = true;
 			if (currentType == LEFT_PAREN){
 				retValue = call_fn();
-				while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){
+				while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){ // move cur_node to end of corresponding instruction
 					cur_node = cur_node->next;
 					if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
 						cur_node = cur_node->next;
@@ -2262,19 +2334,21 @@ T_OBJ fn_cond(){
 						break;
 					}
 				}
-				if (cur_node == NULL)
+				if (cur_node == NULL){
+					printf("ERROR : Syntax Error\n");
 					return result;
+				}
 			}
 			else {
 				return result;
 			}
 		}
-		else if (retValue.t_bool == false){
+		else if (retValue.t_bool == false){ // if condition is false, it will be ignored
 			if (currentType == LEFT_PAREN){
 				left_paren_Count++;
 				int pCount = 1;
 				cur_node = cur_node->next;
-				while (cur_node != NULL && pCount != 0){
+				while (cur_node != NULL && pCount != 0){ // move cur_node to end of corresponding instruction
 					cur_node = cur_node->next;
 					if (cur_node->value.type == LEFT_PAREN){
 						left_paren_Count++;
@@ -2286,8 +2360,10 @@ T_OBJ fn_cond(){
 						pCount--;
 					}
 				}
-				if (cur_node == NULL)
+				if (cur_node == NULL){
+					printf("ERROR : Syntax Error\n");
 					return result;
+				}
 			}
 			else {
 				return result;
@@ -2296,7 +2372,7 @@ T_OBJ fn_cond(){
 
 		currentType = cur_node->value.type;
 
-		if (currentType == RIGHT_PAREN){
+		if (currentType == RIGHT_PAREN){ // break out the current instruction 
 			right_paren_Count++;
 			cur_node = cur_node->next;			
 			if (cur_node->value.type == SEMI_COLON){
@@ -2307,21 +2383,22 @@ T_OBJ fn_cond(){
 			return result;
 		}
 	}
+	// if condition is true, it will exit the loop
 
 	LIST_NODE *checkLast;
 
-	if (condition == true){		
+	if (condition == true){ // if condition is true, it will ignore other instructions
 		while (1){		
 			checkLast = cur_node->next;
-			if (cur_node->value.type == RIGHT_PAREN && checkLast->value.type == EOF){
+			if (cur_node->value.type == RIGHT_PAREN && checkLast->value.type == EOF){ // for check the end of cond instruction
 				break;
 			}
-			else if (cur_node->value.type == RIGHT_PAREN && checkLast->value.type == SEMI_COLON){
+			else if (cur_node->value.type == RIGHT_PAREN && checkLast->value.type == SEMI_COLON){ // for check the end of cond instruction
 				break;
 			}
 
 			currentType = cur_node->value.type;
-			if (currentType == LEFT_PAREN){
+			if (currentType == LEFT_PAREN){ // inside of current instruction 
 				left_paren_Count++;
 				cur_node = cur_node->next;
 				currentType = cur_node->value.type;
@@ -2330,11 +2407,12 @@ T_OBJ fn_cond(){
 				return result;
 			}
 
+			// ignore condition part
 			if (currentType == LEFT_PAREN){
 				left_paren_Count++;
 				int pCount = 1;
 				cur_node = cur_node->next;
-				while (cur_node != NULL && pCount != 0){
+				while (cur_node != NULL && pCount != 0){ // move cur_node to end of corresponding instruction
 					cur_node = cur_node->next;
 					if (cur_node->value.type == LEFT_PAREN){
 						left_paren_Count++;
@@ -2350,11 +2428,12 @@ T_OBJ fn_cond(){
 					return result;
 			}
 
+			// ignore executive part
 			if (currentType == LEFT_PAREN){
 				left_paren_Count++;
 				int pCount = 1;
 				cur_node = cur_node->next;
-				while (cur_node != NULL && pCount != 0){
+				while (cur_node != NULL && pCount != 0){ // move cur_node to end of corresponding instruction
 					cur_node = cur_node->next;
 					if (cur_node->value.type == LEFT_PAREN){
 						left_paren_Count++;
@@ -2371,7 +2450,7 @@ T_OBJ fn_cond(){
 			}
 
 			currentType = cur_node->value.type;
-			if (currentType == RIGHT_PAREN){
+			if (currentType == RIGHT_PAREN){ // break out the current instruction 
 				right_paren_Count++;
 				cur_node = cur_node->next;
 				if (cur_node->value.type == SEMI_COLON){
@@ -2383,11 +2462,11 @@ T_OBJ fn_cond(){
 			}
 
 			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
 			}
 		}
-	}
-	
+	}	
 
 	currentType = cur_node->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
@@ -2396,9 +2475,7 @@ T_OBJ fn_cond(){
 		if (cur_node->value.type == EOF || cur_node->value.type == SEMI_COLON || cur_node->value.type == RIGHT_PAREN || cur_node->value.type == LEFT_PAREN){
 			return retValue;
 		}
-		if (ifFlag){
-			return retValue;
-		}
+		right_paren_Count++;
 	}
 
 	return result;

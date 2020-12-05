@@ -7,8 +7,6 @@
 #include <string.h>
 #include "c_dictionary.h"
 #include "util.h"
-#define ABS(X) ((X) < 0 ? -(X) : (X))
-#define epsilon 0.000001
 
 T_OBJ fn_atom();
 T_OBJ fn_null();
