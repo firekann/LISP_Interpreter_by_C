@@ -37,24 +37,9 @@ T_OBJ fn_atom(){ // ATOM function
 	int currentType = cur_node->value.type; // save the value's type
 
 	if (currentType == LEFT_PAREN){ // meet left paren
-		LIST_NODE *check = cur_node->next;
-		if (check->value.type == IDENT){ // if next type is ident, it is list
-			left_paren_Count++;
-			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN){
-				cur_node = cur_node->next;
-				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
-					cur_node = cur_node->next;
-					right_paren_Count += 2;
-					break;
-				}
-			}
-			result.type = T_LIST;
-			return result;
-		}
-
 		T_OBJ retValue = call_fn(); // if next type is not ident, it means a instruction. Call function
 		if (retValue.type == T_LIST){ // if next type is list, should return NIL
-			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN){
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN){ // move cur_node to end of corresponding instruction
 				cur_node = cur_node->next;
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
 					cur_node = cur_node->next;
@@ -131,8 +116,10 @@ T_OBJ fn_atom(){ // ATOM function
 			return result;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
 
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -166,9 +153,23 @@ T_OBJ fn_null(){ // NULL function
 	int currentType = cur_node->value.type; // save the value's type
 
 	if (currentType == LEFT_PAREN){
+		LIST_NODE *check = cur_node->next;
+		if (check->value.type > 500){ // next value is not a function
+			left_paren_Count++;
+			while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN){ // move cur_node to end of corresponding instruction
+				cur_node = cur_node->next;
+				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+					cur_node = cur_node->next;
+					right_paren_Count += 2;
+					break;
+				}
+			}
+			return result;
+		}
+
 		T_OBJ retValue = call_fn(); // Call function
 
-		if (retValue.t_bool != false){ // if return value is true, continue
+		if (retValue.t_bool != false){ // if return value is true, return false
 			cur_node = cur_node->next;
 			return result;
 		}			
@@ -201,8 +202,17 @@ T_OBJ fn_null(){ // NULL function
 		else
 			return result; // not NIL
 	}
-	else
+	else{
+		while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN){ // move cur_node to end of corresponding instruction
+			cur_node = cur_node->next;
+			if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+				cur_node = cur_node->next;
+				right_paren_Count++;
+				break;
+			}
+		}
 		return result; // not NIL
+	}
 
 	currentType = cur_node->value.type;
 	if (currentType == RIGHT_PAREN){ // end of instruction
@@ -213,8 +223,9 @@ T_OBJ fn_null(){ // NULL function
 			return result;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -260,10 +271,8 @@ T_OBJ fn_numberp(){ // NUMBERP function
 					break;
 				}
 			}
-			if (cur_node == NULL){
-				printf("ERROR : Syntax Error\n");
-				return result;
-			}
+			right_paren_Count++;
+			return result;			
 		}
 	}
 	else if (currentType == FLOAT || currentType == INT){ // if type is FLOAT or INT
@@ -293,8 +302,9 @@ T_OBJ fn_numberp(){ // NUMBERP function
 			return result;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -408,8 +418,9 @@ T_OBJ fn_zerop(){ // ZEROP function
 			return result;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -450,6 +461,19 @@ T_OBJ fn_minusp(){ // MINUSP function
 		}
 		else if (retValue.type == FLOAT){ // if return type is FLOAT, check whether value is bigger than 0
 			if (retValue.t_float >= 0)
+				return result;
+		}
+		else if (retValue.type == IDENT){
+			if (has_dict_key(dict, retValue.t_string)){
+				T_OBJ data = get_dict_obj(dict, retValue.t_string);
+				if (data.type == INT && data.t_int == 0){ // if type is INT and value is 0
+				}
+				else if (data.type == FLOAT && data.t_float == 0){ // if type is FLOAT and value is 0
+				}
+				else
+					return result;
+			}
+			else
 				return result;
 		}
 		else { // move cur_node to end of corresponding instruction
@@ -512,8 +536,9 @@ T_OBJ fn_minusp(){ // MINUSP function
 			return result;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -551,6 +576,9 @@ T_OBJ fn_equal(){ // EQUAL function
 	float floatValue; // to save before node's value
 	bool boolValue; // to save before node's value
 	char stringValue[MAX_COMMAND_LEN]; // to save before node's value
+	stringValue[0] = '\0';
+	char listValue[MAX_COMMAND_LEN]; // to save before node's value
+	listValue[0] = '\0';
 
 	int currentType = cur_node->value.type; // save the value's type
 
@@ -680,6 +708,70 @@ T_OBJ fn_equal(){ // EQUAL function
 		}
 		else
 			return result;
+	}
+	else if (currentType == SQUOTE){ // if it meets list
+		
+		cur_node = cur_node->next;
+		if (cur_node->value.type == IDENT){
+			beforeType = IDENT;
+			strcat(stringValue, cur_node->value.t_string);
+			cur_node = cur_node->next;
+		}
+		else if (cur_node->value.type == LEFT_PAREN){
+			beforeType = T_LIST;
+			left_paren_Count++;
+			int pCount = 1;
+			while (cur_node != NULL && pCount != 0){ // move cur_node to end of corresponding instruction
+				cur_node = cur_node->next;
+				if (cur_node->value.type == LEFT_PAREN){
+					LIST_NODE *check = cur_node->next;
+					if (check->value.type == IDENT || check->value.type == INT || check->value.type == FLOAT || check->value.type == NIL || check->value.type == STRING){
+						left_paren_Count++;
+						cur_node = cur_node->next;
+						strcat(stringValue, cur_node->value.t_string);
+					}
+					else{
+						T_OBJ decision = call_fn();
+						while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && decision.t_bool == false){
+							cur_node = cur_node->next;
+							if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+								cur_node = cur_node->next;
+								right_paren_Count++;
+								break;
+							}
+						}
+						if (cur_node == NULL){
+							printf("ERROR : Syntax Error\n");
+							return result;
+						}
+						if (decision.type == IDENT || decision.type == INT || decision.type == FLOAT || decision.type == NIL || decision.type == STRING){
+							strcat(stringValue, decision.t_string);
+						}
+						else if (decision.type == BOOLEAN){
+							if (decision.t_bool == false)
+								strcat(stringValue, "0");
+							else
+								strcat(stringValue, "1");
+						}
+					}
+					pCount++;
+				}
+				else{
+					if (cur_node->value.type == IDENT || cur_node->value.type == INT || cur_node->value.type == FLOAT || cur_node->value.type == NIL || cur_node->value.type == STRING){
+						strcat(stringValue, cur_node->value.t_string);
+					}
+				}
+				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+					cur_node = cur_node->next;
+					right_paren_Count++;
+					pCount--;
+				}
+			}
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
+				return result;
+			}
+		}
 	}
 	else
 		return result;
@@ -848,6 +940,74 @@ T_OBJ fn_equal(){ // EQUAL function
 		else
 			return result;
 	}
+	else if (currentType == SQUOTE){ // if it meets list
+		
+		cur_node = cur_node->next;
+		if (cur_node->value.type == IDENT){
+			currentType = IDENT;
+			strcat(listValue, cur_node->value.t_string);
+			cur_node = cur_node->next;
+		}
+		else if (cur_node->value.type == LEFT_PAREN){
+			currentType = T_LIST;
+			left_paren_Count++;
+			int pCount = 1;
+			while (cur_node != NULL && pCount != 0){ // move cur_node to end of corresponding instruction
+				cur_node = cur_node->next;
+				if (cur_node->value.type == LEFT_PAREN){
+					LIST_NODE *check = cur_node->next;
+					if (check->value.type == IDENT || check->value.type == INT || check->value.type == FLOAT || check->value.type == NIL || check->value.type == STRING){
+						left_paren_Count++;
+						cur_node = cur_node->next;
+						strcat(listValue, cur_node->value.t_string);
+					}
+					else{
+						T_OBJ decision = call_fn();
+						while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && decision.t_bool == false){
+							cur_node = cur_node->next;
+							if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+								cur_node = cur_node->next;
+								right_paren_Count++;
+								break;
+							}
+						}
+						if (cur_node == NULL){
+							printf("ERROR : Syntax Error\n");
+							return result;
+						}
+						if (decision.type == IDENT || decision.type == INT || decision.type == FLOAT || decision.type == NIL || decision.type == STRING){
+							strcat(listValue, decision.t_string);
+						}
+						else if (decision.type == BOOLEAN){
+							if (decision.t_bool == false)
+								strcat(listValue, "0");
+							else
+								strcat(listValue, "1");
+						}
+					}
+					pCount++;
+				}
+				else{
+					if (cur_node->value.type == IDENT || cur_node->value.type == INT || cur_node->value.type == FLOAT || cur_node->value.type == NIL || cur_node->value.type == STRING){
+						strcat(listValue, cur_node->value.t_string);
+					}
+				}
+				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+					cur_node = cur_node->next;
+					right_paren_Count++;
+					pCount--;
+				}
+			}
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
+				return result;
+			}
+		}
+		if (beforeType == currentType && !strcmp(stringValue, listValue)){
+		}
+		else
+			return result;
+	}
 	else
 		return result;
 
@@ -860,8 +1020,9 @@ T_OBJ fn_equal(){ // EQUAL function
 			return result;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -1138,8 +1299,9 @@ T_OBJ fn_left_inequal(){ // > function
 			return result;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -1416,8 +1578,9 @@ T_OBJ fn_right_inequal(){ // < function
 			return result;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -1694,8 +1857,9 @@ T_OBJ fn_left_inequal_same(){ // >= function
 			return result;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -1972,8 +2136,9 @@ T_OBJ fn_right_inequal_same(){ // <= function
 			return result;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -2080,8 +2245,9 @@ T_OBJ fn_stringp(){ // STRINGP function
 			return result;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -2169,8 +2335,10 @@ T_OBJ fn_if(){ // IF function
 					break;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
 		else {
 			return result;
@@ -2193,8 +2361,10 @@ T_OBJ fn_if(){ // IF function
 					pCount--;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
 		else {
 			return result;
@@ -2219,8 +2389,10 @@ T_OBJ fn_if(){ // IF function
 					pCount--;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
 		currentType = cur_node->value.type;
 
@@ -2235,8 +2407,10 @@ T_OBJ fn_if(){ // IF function
 					break;
 				}
 			}
-			if (cur_node == NULL)
+			if (cur_node == NULL){
+				printf("ERROR : Syntax Error\n");
 				return result;
+			}
 		}
 		else if (currentType == RIGHT_PAREN){
 		}
@@ -2255,8 +2429,9 @@ T_OBJ fn_if(){ // IF function
 			return retValue;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
 
@@ -2476,7 +2651,8 @@ T_OBJ fn_cond(){ // COND function
 			return retValue;
 		}
 		right_paren_Count++;
+		printf("ERROR : Syntax Error\n");
 	}
-
+	printf("ERROR : Syntax Error\n");
 	return result;
 }
