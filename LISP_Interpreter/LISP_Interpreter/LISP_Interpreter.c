@@ -20,23 +20,30 @@
 /******************************************/
 
 void print_list(T_OBJ* value) {
-	printf("list size : %d\n", value->t_int);
-	T_OBJ* tmp = value->t_list_value;
-	T_OBJ* node = value->next;
-	while (node != NULL) {
-		if (tmp->type == T_LIST) print_list(tmp);
-		else {
-			printf("type : %d , ", tmp->type);
-			printf("value : %s\n", tmp->t_string);
+	//printf("list size : %d : ", value->t_int);
+	T_OBJ *list;
+	T_OBJ *listNext = value;
+	printf("( ");
+	for (int i = 0; i < value->t_int; i++) {
+		list = listNext;
+		listNext = listNext->next;
+		list = list->t_list_value;
+		if (list->type == INT) {
+			printf("%d ", list->t_int);
 		}
-		tmp = node->t_list_value;
-		node = node->next;
+		else if (list->type == FLOAT) {
+			printf("%f ", list->t_float);
+		}
+		else if (list->type == STRING) {
+			printf("%s ", list->t_string);
+		}
+		else if (list->type == T_LIST) {
+			print_list(list);
+		}
+		if (i + 1 != value->t_int)
+			printf(" ");
 	}
-	if (tmp->type == T_LIST) print_list(tmp);
-	else {
-		printf("type : %d , ", tmp->type);
-		printf("value : %s\n", tmp->t_string);
-	}
+	printf(")");
 	return;
 }
 
@@ -75,27 +82,8 @@ int main()
 				printf("T\n");
 			}
 			else if (decision.type == T_LIST){
-				int cycle = decision.t_int;
-				T_OBJ *list;
-				T_OBJ *listNext = &decision;
-				printf("( ");
-				for (int i = 0; i < cycle; i++){
-					list = listNext;
-					listNext = listNext->next;
-					list = list->t_list_value;
-					if (list->type == INT){
-						printf("%d ", list->t_int);
-					}
-					else if (list->type == FLOAT){
-						printf("%f ", list->t_float);
-					}
-					else if (list->type == STRING){
-						printf("%s ", list->t_string);
-					}
-					if (i + 1 != cycle)
-						printf(" ");
-				}
-				printf(")\n");
+				print_list(&decision);
+				printf("\n");
 			}
 		}
 		else{
@@ -110,6 +98,7 @@ int main()
 			if (dict_node->value.type == T_LIST) {
 				printf("\n");
 				print_list(&(dict_node->value));
+				printf("\n");
 			}
 			else printf("value : %s\n", dict_node->value.t_string);
 			dict_node = dict_node->next;
