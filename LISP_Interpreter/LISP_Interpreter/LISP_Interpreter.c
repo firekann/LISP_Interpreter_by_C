@@ -23,19 +23,19 @@ void print_list(T_OBJ* value) {
 	//printf("list size : %d : ", value->t_int);
 	T_OBJ *list;
 	T_OBJ *listNext = value;
-	printf("( ");
+	printf("(");
 	for (int i = 0; i < value->t_int; i++) {
 		list = listNext;
 		listNext = listNext->next;
 		list = list->t_list_value;
 		if (list->type == INT) {
-			printf("%d ", list->t_int);
+			printf("%d", list->t_int);
 		}
 		else if (list->type == FLOAT) {
-			printf("%f ", list->t_float);
+			printf("%f", list->t_float);
 		}
 		else if (list->type == STRING) {
-			printf("%s ", list->t_string);
+			printf("%s", list->t_string);
 		}
 		else if (list->type == T_LIST) {
 			print_list(list);
