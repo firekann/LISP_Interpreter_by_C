@@ -578,6 +578,10 @@ T_OBJ fn_list() {
 				cur_node = cur_node->next;
 			}
 		}
+		else if (cur_node->value.type == INT || cur_node->value.type == FLOAT || cur_node->value.type == STRING || cur_node->value.type == BOOLEAN) {
+			tmp = cur_node->value;
+			cur_node = cur_node->next;
+		}
 		else if (cur_node->value.type == IDENT) {
 			tmp = get_dict_obj(dict, cur_node->value.t_string);
 			cur_node = cur_node->next;
