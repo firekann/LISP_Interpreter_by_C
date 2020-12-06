@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 			}
 			cur_node = cur_node->next;
 		}
-		else if(cur_node->value.type == LEFT_PAREN){
+		else if (cur_node->value.type == LEFT_PAREN) {
 			T_OBJ decision = call_fn();
 			if (left_paren_Count != right_paren_Count) {
 				printf("NIL\n");
@@ -124,10 +124,10 @@ void print_obj(T_OBJ* value) {
 		printf("\'");
 	}
 	else if (value->type == BOOLEAN) {
-		if (value->t_bool == false){
+		if (value->t_bool == false) {
 			printf("NIL");
 		}
-		else{
+		else {
 			printf("T");
 		}
 	}

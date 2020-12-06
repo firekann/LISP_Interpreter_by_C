@@ -814,7 +814,7 @@ T_OBJ fn_cdr(bool is_first) {
 	}
 
 	if (tmp.type == T_LIST) {
-		if (tmp.t_int < 2) {	//리스트의 원소가 0개일 경우 에러
+		if (tmp.t_int < 2) {	//리스트의 원소가 1개 이하일 경우 에러
 			printf("ERROR : NO ITEM IN THE LIST ERROR FOR CDR\n");
 			return return_false();
 		}

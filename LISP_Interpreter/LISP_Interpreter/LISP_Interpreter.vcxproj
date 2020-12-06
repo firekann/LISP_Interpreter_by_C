@@ -155,7 +155,6 @@
     <ClCompile Include="CONS~SUBST.c" />
     <ClCompile Include="c_dictionary.c" />
     <ClCompile Include="c_list.c" />
-    <ClCompile Include="c_stack.c" />
     <ClCompile Include="lexer.c" />
     <ClCompile Include="LISP_Interpreter.c" />
     <ClCompile Include="OP~NTH.c" />
@@ -166,7 +165,6 @@
     <ClInclude Include="CONS~SUBST.h" />
     <ClInclude Include="c_dictionary.h" />
     <ClInclude Include="c_list.h" />
-    <ClInclude Include="c_stack.h" />
     <ClInclude Include="lexer.h" />
     <ClInclude Include="OP~NTH.h" />
     <ClInclude Include="type.h" />
