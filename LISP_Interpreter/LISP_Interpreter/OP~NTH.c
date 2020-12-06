@@ -521,7 +521,7 @@ T_OBJ fn_setq() {
 	}
 	else if (cur_node->value.type == LEFT_PAREN) {	// 괄호가 나올 경우 처리함
 		res = call_fn();	//리턴값이 있는 함수의 경우
-		if(!(res.type == INT || res.type == FLOAT || res.type == STRING || res.type == T_LIST || res.type == BOOLEAN || res.type == NIL)) {
+		if(!(res.type == INT || res.type == FLOAT || res.type == STRING || res.type == T_LIST || res.type == BOOLEAN)) {
 			printf("ERROR : TYPE ERROR FOR SETQ\n");
 			free(symbol);
 			return return_false();
@@ -533,7 +533,7 @@ T_OBJ fn_setq() {
 	}
 	else {
 		// 정수 실수 문자열의 경우
-		if (cur_node->value.type == INT || cur_node->value.type == FLOAT || cur_node->value.type == STRING || cur_node->value.type == BOOLEAN || cur_node->value.type == NIL) {
+		if (cur_node->value.type == INT || cur_node->value.type == FLOAT || cur_node->value.type == STRING || cur_node->value.type == BOOLEAN) {
 			res = cur_node->value;
 			cur_node = cur_node->next;
 		}
