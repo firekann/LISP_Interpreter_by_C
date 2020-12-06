@@ -15,6 +15,11 @@ T_OBJ free_obj(T_OBJ* obj_ptr) {
 		free_obj(obj_ptr->next);
 		free(obj_ptr);
 	}
+	else {
+		free(obj_ptr->t_list_value);
+		free_obj(obj_ptr->next);
+		free(obj_ptr);
+	}
 	return;
 }
 
