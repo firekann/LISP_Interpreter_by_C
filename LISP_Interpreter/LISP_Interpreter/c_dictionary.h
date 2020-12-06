@@ -23,6 +23,5 @@ void insert_dict_node(c_DICT*, char*, T_OBJ*);
 void delete_dict_node(c_DICT*, char*);
 bool has_dict_key(c_DICT*, char*);
 T_OBJ get_dict_obj(c_DICT*, char*);
-T_OBJ free_obj(T_OBJ*);
 
 #endif
