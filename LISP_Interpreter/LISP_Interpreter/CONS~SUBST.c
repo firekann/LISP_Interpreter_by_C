@@ -538,118 +538,64 @@ EX)
 (TWO 2) ; 첫번째 원소가 TWO인 리스트를 찾아내서 리턴함
 */
 T_OBJ fn_assoc(){
-    	if (cur_node->value.type == LEFT_PAREN) {	//왼쪽 괄호 확인
+	if (cur_node->value.type == LEFT_PAREN) {	//왼쪽 괄호 확인
 		left_paren_Count++;
 		cur_node = cur_node->next;
 		cur_node = cur_node->next;
 		cur_node = cur_node->next;
 	}
 	else {
-		printf("ERROR : NO LEFT_PAREN FOR LIST\n");
+		printf("ERROR : NO LEFT_PAREN FOR ASSOC\n");
+		return return_false();
+	}
+
+	if (cur_node->value.type != IDENT) {
+		printf("ERROR : TYPE ERROR FOR ASSOC\n");
 		return return_false();
 	}
 	char* target = cur_node->value.t_string;
-	printf("%c", &target);
 	cur_node = cur_node->next;
+	printf("%c\n", target);
+	bool isfind = false;
 
-    bool isfind = false;
-    while(cur_node->next == NULL){
-        if(cur_node->value.t_string == target){
-            break;
-        }
+	T_OBJ tmp;
+	if (cur_node->value.type == SQUOTE) {
 		cur_node = cur_node->next;
-    }
-    if(cur_node->next == NULL){
-        printf("ERROR");
-        return return_false();
-    }
+		tmp = fn_make_list();
+	}
+	else if (cur_node->value.type == IDENT) {
+		tmp = get_dict_obj(dict, cur_node->value.t_string);
+		cur_node = cur_node->next;
+	}
+	else {
+		printf("ERROR : TYPE ERROR FOR ASSOC\n");
+		return return_false();
+	}
 
+	if (tmp.type != T_LIST) {
+		printf("ERROR : TYPE ERROR FOR ASSOC\n");
+		return return_false();
+	}
 
-	int cnt = 0;
-	c_LIST* tmp_list = initialize_list();	//리스트를 생성하기 위한 임시 리스트
-	while (cur_node->value.type != RIGHT_PAREN) {	//오른쪽 괄호가 나오기 전까지 반복
-		T_OBJ tmp;
-		if (cur_node->value.type == SQUOTE) {
-			cur_node = cur_node->next;
-			if (cur_node->value.type == LEFT_PAREN) {	//괄호가 올 경우 처리함
-				tmp = fn_make_list();
-			}
-			else {	//괄호가 없을 경우 현재 노드의 value를 tmp에 할당
-				tmp = cur_node->value;
-				cur_node = cur_node->next;
-				if (!(tmp.type == INT || tmp.type == FLOAT || tmp.type == STRING || tmp.type == BOOLEAN || tmp.type == T_LIST)) {
-					tmp.type = STRING;
-				}
-			}
-		}
-		else if (cur_node->value.type == LEFT_PAREN) {	//이 경우 함수를 호출해서 처리함.
-			tmp = call_fn();
-		}
-		else if (cur_node->value.type == INT || cur_node->value.type == FLOAT || cur_node->value.type == STRING || cur_node->value.type == BOOLEAN) {
-			tmp = cur_node->value;
-			cur_node = cur_node->next;
-		}
-		else if (cur_node->value.type == IDENT) {
-			tmp = get_dict_obj(dict, cur_node->value.t_string);
-			cur_node = cur_node->next;
-		}
-		else {
-			printf("ERROR : TYPE ERROR FOR LIST\n");
-			free_list(tmp_list);
-			return return_false();
-		}
-		if (tmp.type == IDENT) {	//IDENT의 경우 STRING으로 취급해서 처리
-			tmp.type = STRING;
-			insert_list_node(tmp_list, &tmp);
-		}
-		else if (tmp.type == INT || tmp.type == FLOAT || tmp.type == STRING || tmp.type == BOOLEAN || tmp.type == T_LIST) {	//이 경우는 그냥 할당
-			insert_list_node(tmp_list, &tmp);
-		}
-		else {
-			printf("ERROR : TYPE ERROR FOR LIST\n");
-			free_list(tmp_list);
-			return return_false();
-		}
-		cnt++;
-	}
-	//printf("list size : %d , %d\n", tmp_list->list_size, cnt);	//디버깅용
-	T_OBJ head;
-	T_OBJ* pre_obj = &head;
-	head.type = T_LIST;
-	head.t_int = cnt;
-	head.next = head.t_list_value = NULL;
-	head.t_bool = true;
-	if (cnt == 0) {	//인자가 0개면 길이가 0인 리스트를 반환한다.
-		return head;
-	}
-	//아니라면 임시로 만든 리스트의 값을 이용해서 리스트를 생성한다.
-	LIST_NODE* tmp_node = tmp_list->head;
-	while (tmp_node != NULL) {
-		if (head.t_list_value == NULL) {
-			head.t_list_value = &(tmp_node->value);
-		}
-		else {
-			T_OBJ* tmp = malloc(sizeof(T_OBJ));
-			tmp->type = T_LIST;
-			tmp->t_int = cnt;
-			tmp->t_list_value = &(tmp_node->value);
-			tmp->t_bool = true;
-			tmp->next = NULL;
-			pre_obj->next = tmp;
-			pre_obj = tmp;
-		}
-		tmp_node = tmp_node->next;
-	}
 	if (cur_node->value.type == RIGHT_PAREN) {
 		right_paren_Count++;
 		cur_node = cur_node->next;
-		free(tmp_list);
-		return head;
 	}
 	else {
-		printf("ERROR : NO RIGHT_PAREN FOR LIST\n");
-		free_list(tmp_list);
+		printf("ERROR : NO RIGHT_PAREN FOR ASSOC\n");
 		return return_false();
+	}
+
+	T_OBJ *list;
+	T_OBJ *listNext = &tmp;
+	for (int i = 0; i < tmp.t_int; i++) {
+		list = listNext;
+		listNext = listNext->next;
+		list = list->t_list_value;
+		if (!strcmp(((T_OBJ*)(list->t_list_value))->t_string, target)) {
+			return *list;
+			break;
+		}
 	}
 }
 
