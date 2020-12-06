@@ -1,1 +1,1 @@
-(CONS 'A '(B C D));
+(REMOVE D '(A D B C D E D F));
