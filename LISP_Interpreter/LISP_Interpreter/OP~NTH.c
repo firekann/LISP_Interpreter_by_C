@@ -925,6 +925,8 @@ T_OBJ fn_nth() {
 		}
 		else {	//리스트에 원소가 있을 경우 맨 처음 것에서 원소만 리턴함
 			if (cur_node->value.type == RIGHT_PAREN) {
+				right_paren_Count++;
+				cur_node = cur_node->next;
 				for (; nth--;) {
 					tmp = cdr(tmp);
 				}
@@ -1044,7 +1046,7 @@ T_OBJ car(T_OBJ tmp) {
 
 T_OBJ cdr(T_OBJ tmp) {
 	if (tmp.type == T_LIST) {
-		if (tmp.t_int < 2) {	//리스트의 원소가 0개일 경우 에러
+		if (tmp.t_int < 2) {	//리스트의 원소가 1개 이하일 경우 에러
 			printf("ERROR : NO ITEM IN THE LIST ERROR FOR CDR(함수)\n");
 			return return_false();
 		}
