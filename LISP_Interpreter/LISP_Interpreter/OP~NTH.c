@@ -866,34 +866,37 @@ T_OBJ fn_nth() {
 		return return_false();
 	}
 
+	T_OBJ tmp;
 	int nth;
 	if (cur_node->value.type == INT) {
 		nth = cur_node->value.t_int;
 		cur_node = cur_node->next;
+	}
+	else if (cur_node->value.type == LEFT_PAREN) {	//이 경우 함수를 호출해서 처리함.
+		tmp = call_fn();
+		if (tmp.type != INT) {
+			printf("ERROR : TYPE ERROR FOR NTH\n");
+			return return_false();
+		}
+		nth = tmp.t_int;
 	}
 	else {
 		printf("ERROR : TYPE ERROR FOR NTH\n");
 		return return_false();
 	}
 
-	T_OBJ tmp;
 	if (cur_node->value.type == SQUOTE) {
 		cur_node = cur_node->next;
 		if (cur_node->value.type == LEFT_PAREN) {	//괄호가 올 경우 처리함
-			LIST_NODE* tmp_node = cur_node->next;
-			if (tmp_node->value.type == INT || tmp_node->value.type == FLOAT || tmp_node->value.type == STRING || tmp_node->value.type == BOOLEAN) {
-				//괄호 뒤의 토큰이 함수가 아니면 make_list를 호출해준다.
-				tmp = fn_make_list();
-			}
-			else {
-				//괄호 뒤의 토큰이 함수라면 call_fn을 통해서 함수를 호출해준다.
-				tmp = call_fn();
-			}
+			tmp = fn_make_list();
 		}
 		else {	//괄호가 없을 경우 리스트가 아니므로 N번째 원소가 없음
 			printf("ERROR : TYPE ERROR FOR NTH\n");
 			return return_false();
 		}
+	}
+	else if (cur_node->value.type == LEFT_PAREN) {	//이 경우 함수를 호출해서 처리함.
+		tmp = call_fn();
 	}
 	else if (cur_node->value.type == IDENT) {
 		tmp = get_dict_obj(dict, cur_node->value.t_string);
