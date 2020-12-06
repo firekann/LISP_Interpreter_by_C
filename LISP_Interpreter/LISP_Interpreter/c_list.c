@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "c_list.h"
 #include <stdio.h>
 #include <string.h>

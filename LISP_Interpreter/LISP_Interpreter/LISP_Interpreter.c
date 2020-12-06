@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 			}
 			cur_node = cur_node->next;
 		}
-		else {
+		else if(cur_node->value.type == LEFT_PAREN){
 			T_OBJ decision = call_fn();
 			if (left_paren_Count != right_paren_Count) {
 				printf("NIL\n");
@@ -78,6 +78,9 @@ int main(int argc, char* argv[])
 			else {
 				printf("NIL\n");
 			}
+		}
+		else {
+			cur_node = cur_node->next;
 		}
 
 		/*

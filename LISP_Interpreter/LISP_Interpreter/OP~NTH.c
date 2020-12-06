@@ -404,6 +404,11 @@ T_OBJ fn_div() {
 					sum = (float)tmp.t_int;
 				}
 				else {
+					if (tmp.t_int == 0.0) {
+						printf("ERROR : DIV NUM IS \"0\"  FOR DIV\n");
+						free(key);
+						return return_false();
+					}
 					sum /= (float)tmp.t_int;
 				}
 			}
@@ -413,6 +418,11 @@ T_OBJ fn_div() {
 					sum = (float)tmp.t_float;
 				}
 				else {
+					if (tmp.t_float == 0.0) {
+						printf("ERROR : DIV NUM IS \"0\"  FOR DIV\n");
+						free(key);
+						return return_false();
+					}
 					sum /= (float)tmp.t_float;
 				}
 			}
