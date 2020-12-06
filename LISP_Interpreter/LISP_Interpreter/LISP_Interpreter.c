@@ -40,8 +40,8 @@ int main(int argc, char* argv[])
 	/*
 	LIST_NODE* node = obj_list->head;
 	while (node != NULL) {
-		printf("Next token is: %d, Next lexeme is %s\n", node->value.type, node->value.t_string);
-		node = node->next;
+	printf("Next token is: %d, Next lexeme is %s\n", node->value.type, node->value.t_string);
+	node = node->next;
 	}
 	*/
 
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 		else if (decision.t_bool == true) {
 			print_obj(&decision);
 		}
-		else if (decision.t_bool == false) {
+		else if (decision.t_bool == false){
 			print_obj(&decision);
 		}
 		else if (nextToken == EOF) {
@@ -113,11 +113,16 @@ void print_obj(T_OBJ* value) {
 	else if (value->type == STRING) {
 		printf("%s ", value->t_string);
 	}
-	else if (value->type == BOOLEAN) {
-		printf("T ");
-	}
 	else if (value->type == SQUOTE) {
 		printf("\' ");
+	}
+	else if (value->type == BOOLEAN) {
+		if (value->t_bool == false){
+			printf("NIL\n");
+		}
+		else{
+			printf("T\n");
+		}
 	}
 	else if (value->type == T_LIST) {
 		print_list(value);

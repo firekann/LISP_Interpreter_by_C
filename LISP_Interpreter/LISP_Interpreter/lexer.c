@@ -22,15 +22,17 @@ int lookup(char ch) {
 		nextToken = ADD_OP;
 		break;
 	case '-':
-		if (command[cursor] >= 48 && command[cursor] <= 57){
+		getChar();
+		addChar();
+		
+		if (nextChar >= 48 && nextChar <= 57){
 			minusFlag = 1;
 			getChar();
 			lex();
-			if (command[cursor - 1] != lexeme[lexLen])
-				cursor--;
 		}
 		else{
-			addChar();
+			nextChar = '-';
+			lexeme[0] = '-';
 			nextToken = SUB_OP;
 		}
 		break;
@@ -262,6 +264,9 @@ int lex() {
 
 		/* Parse integer literals */
 	case DIGIT:
+		if (minusFlag == 1){
+			lexLen++;
+		}
 		addChar();
 		getChar();
 		while (charClass == DIGIT) {
@@ -317,7 +322,7 @@ int lex() {
 		insert_list_node(obj_list, &tmp_obj);
 		printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
 	}
-	
+
 	/* print to code.out file */
 	// fprintf(out_fp, "Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
 
@@ -335,7 +340,7 @@ T_OBJ create_obj() {
 		tmp.t_int = atoi(lexeme);
 	}
 	else if (nextToken == FLOAT) {
-		tmp.t_float = atof(lexeme);		
+		tmp.t_float = atof(lexeme);
 	}
 	tmp.lexed_len = lexLen;
 	tmp.t_string = (char*)malloc(sizeof(char)*(lexLen + 1));
