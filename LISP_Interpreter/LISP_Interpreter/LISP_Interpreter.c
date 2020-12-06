@@ -51,29 +51,33 @@ int main(int argc, char* argv[])
 			if (has_dict_key(dict, cur_node->value.t_string)) {
 				T_OBJ tmp = get_dict_obj(dict, cur_node->value.t_string);
 				print_obj(&tmp);
+				printf("\n");
 			}
 			else {
 				printf("NO IDENT\n");
 			}
 			cur_node = cur_node->next;
-			continue;
-		}
-		T_OBJ decision = call_fn();
-		if (left_paren_Count != right_paren_Count) {
-			printf("NIL\n");
-		}
-		else if (decision.t_bool == true) {
-			print_obj(&decision);
-		}
-		else if (decision.t_bool == false){
-			print_obj(&decision);
-		}
-		else if (nextToken == EOF) {
-			printf("EOF\n");
-			return 0;
 		}
 		else {
-			printf("NIL\n");
+			T_OBJ decision = call_fn();
+			if (left_paren_Count != right_paren_Count) {
+				printf("NIL\n");
+			}
+			else if (decision.t_bool == true) {
+				print_obj(&decision);
+				printf("\n");
+			}
+			else if (decision.t_bool == false) {
+				print_obj(&decision);
+				printf("\n");
+			}
+			else if (nextToken == EOF) {
+				printf("EOF\n");
+				return 0;
+			}
+			else {
+				printf("NIL\n");
+			}
 		}
 
 		/*
@@ -118,10 +122,10 @@ void print_obj(T_OBJ* value) {
 	}
 	else if (value->type == BOOLEAN) {
 		if (value->t_bool == false){
-			printf("NIL\n");
+			printf("NIL ");
 		}
 		else{
-			printf("T\n");
+			printf("T ");
 		}
 	}
 	else if (value->type == T_LIST) {
