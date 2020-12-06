@@ -533,7 +533,7 @@ T_OBJ fn_setq() {
 	}
 	else {
 		// 정수 실수 문자열의 경우
-		if (cur_node->value.type == INT || cur_node->value.type == FLOAT || cur_node->value.type == STRING) {
+		if (cur_node->value.type == INT || cur_node->value.type == FLOAT || cur_node->value.type == STRING || cur_node->value.type == BOOLEAN || cur_node->value.type == NIL) {
 			res = cur_node->value;
 			cur_node = cur_node->next;
 		}
