@@ -290,67 +290,37 @@ T_OBJ fn_length(){
 		printf("ERROR");
 		return;
 	}
-    int cnt = 0;
-    c_LIST* tmp_list = initialize_list();
+	T_OBJ tmp;
+	if (cur_node->value.type == SQUOTE) {
+		cur_node = cur_node->next;
+		tmp = fn_make_list();
+	}
+	else if (cur_node->value.type == IDENT) {
+		tmp = get_dict_obj(dict, cur_node->value.t_string);
+		cur_node = cur_node->next;
+	}
+	else {
+		printf("ERROR : TYPE ERROR FOR LENGTH\n");
+		return return_false();
+	}
 
-        while(cur_node->value.type == RIGHT_PAREN){
-            T_OBJ tmp;
-            if(cur_node->value.type == SQUOTE){
-                cur_node = cur_node->next;
-                if(cur_node->value.type == LEFT_PAREN){
-                    LIST_NODE* tmp_node = cur_node->next;
-                    if (tmp_node->value.type == INT || tmp_node->value.type == FLOAT || tmp_node->value.type == STRING || tmp_node->value.type == BOOLEAN) {
-                        //괄호 뒤의 토큰이 함수가 아니면 make_list를 호출해준다.
-                        tmp = fn_make_list();
-                    }
-                    else {
-                        //괄호 뒤의 토큰이 함수라면 call_fn을 통해서 함수를 호출해준다.
-                        tmp = call_fn();
-                    }
-                }
-                else{
-                    tmp = cur_node->value;
-                    cur_node = cur_node->next;
-                }
-            }
-            else if (cur_node->value.type == IDENT) {
-                tmp = get_dict_obj(dict, cur_node->value.t_string);
-                cur_node = cur_node->next;
-            }
-            else {
-                printf("ERROR : TYPE ERROR FOR LIST\n");
-                free_list(tmp_list);
-                return;
-            }
-
-            if (tmp.type == IDENT) {	//IDENT의 경우 STRING으로 취급해서 처리
-                tmp.type = STRING;
-                insert_list_node(tmp_list, &tmp);
-            }
-            else if (tmp.type == INT || tmp.type == FLOAT || tmp.type == STRING || tmp.type == BOOLEAN || tmp.type == T_LIST) {	//이 경우는 그냥 할당
-                insert_list_node(tmp_list, &tmp);
-            }
-            else {
-                printf("ERROR : TYPE ERROR FOR LIST\n");
-                free_list(tmp_list);
-                return;
-            }
-            cnt++;
-    	}
+	if (tmp.type != T_LIST) {
+		printf("ERROR : TYPE ERROR FOR LENGTH\n");
+		return return_false();
+	}
 
 	T_OBJ result;
 	result.type = INT;
-	result.t_int = cnt;
+	result.t_int = tmp.t_int;
+	result.t_bool = true;
 	if (cur_node->value.type == RIGHT_PAREN) {
 		right_paren_Count++;
 		cur_node = cur_node->next;
         return result;
-		free(tmp_list);
 	}
 	else {
-		printf("ERROR : NO RIGHT_PAREN FOR LIST\n");
-		free_list(tmp_list);
-		return;
+		printf("ERROR : NO RIGHT_PAREN FOR LENGTH\n");
+		return return_false();
 	}
 }
 
