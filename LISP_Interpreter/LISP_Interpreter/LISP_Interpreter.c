@@ -109,23 +109,23 @@ int main(int argc, char* argv[])
 
 void print_obj(T_OBJ* value) {
 	if (value->type == INT) {
-		printf("%d ", value->t_int);
+		printf("%d", value->t_int);
 	}
 	else if (value->type == FLOAT) {
-		printf("%f ", value->t_float);
+		printf("%f", value->t_float);
 	}
 	else if (value->type == STRING) {
-		printf("%s ", value->t_string);
+		printf("%s", value->t_string);
 	}
 	else if (value->type == SQUOTE) {
-		printf("\' ");
+		printf("\'");
 	}
 	else if (value->type == BOOLEAN) {
 		if (value->t_bool == false){
-			printf("NIL ");
+			printf("NIL");
 		}
 		else{
-			printf("T ");
+			printf("T");
 		}
 	}
 	else if (value->type == T_LIST) {
