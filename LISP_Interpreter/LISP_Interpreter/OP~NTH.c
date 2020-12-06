@@ -661,6 +661,7 @@ T_OBJ fn_list() {
 			tmp->t_int = cnt;
 			tmp->t_list_value = &(tmp_node->value);
 			tmp->t_bool = true;
+			tmp->next = NULL;
 			pre_obj->next = tmp;
 			pre_obj = tmp;
 		}
