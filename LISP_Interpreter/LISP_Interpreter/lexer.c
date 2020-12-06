@@ -114,8 +114,8 @@ void addChar() {
 of input and determine its character class */
 /*****************************************************/
 void getChar() {
-	if (cursor < commandLen) {
-		nextChar = command[cursor++];
+	if ((nextChar = getc(in_fp)) != EOF) {
+		//nextChar = command[cursor++];
 		if (isalpha(nextChar))
 			charClass = LETTER;
 		else if (isdigit(nextChar))
@@ -315,7 +315,6 @@ int lex() {
 	else{
 		T_OBJ tmp_obj = create_obj();
 		insert_list_node(obj_list, &tmp_obj);
-
 		printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
 	}
 	

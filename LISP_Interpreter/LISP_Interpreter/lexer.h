@@ -20,12 +20,9 @@ char lexeme[MAX_LEXEME_LEN];
 char nextChar;
 int lexLen;
 int token;
-int commandLen;
-int cursor;
 int minusFlag; // to distinguish minus and negative num
 int left_paren_Count; // to count left paren and right paren
 int right_paren_Count; // to count left paren and right paren
-char command[MAX_COMMAND_LEN];
 c_LIST* obj_list;
 LIST_NODE* cur_node;
 c_DICT* dict;

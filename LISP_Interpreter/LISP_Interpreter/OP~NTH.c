@@ -109,7 +109,7 @@ T_OBJ fn_add() {
 		insert_dict_node(dict, key, &tmp);
 		free(key);
 	}
-	printf("ADD : %s, type : %d\n", tmp.t_string, tmp.type);	//µð¹ö±ë¿ë
+	//printf("ADD : %s, type : %d\n", tmp.t_string, tmp.type);	//µð¹ö±ë¿ë
 	return tmp;
 }
 
@@ -236,7 +236,7 @@ T_OBJ fn_sub() {
 		insert_dict_node(dict, key, &tmp);
 		free(key);
 	}
-	printf("SUB : %s, type : %d\n", tmp.t_string, tmp.type);	//µð¹ö±ë¿ë
+	//printf("SUB : %s, type : %d\n", tmp.t_string, tmp.type);	//µð¹ö±ë¿ë
 	return tmp;
 }
 
@@ -344,7 +344,7 @@ T_OBJ fn_mul() {
 		insert_dict_node(dict, key, &tmp);
 		free(key);
 	}
-	printf("MUL : %s, type : %d\n", tmp.t_string, tmp.type);	//µð¹ö±ë¿ë
+	//printf("MUL : %s, type : %d\n", tmp.t_string, tmp.type);	//µð¹ö±ë¿ë
 	return tmp;
 }
 
@@ -470,7 +470,7 @@ T_OBJ fn_div() {
 		insert_dict_node(dict, key, &tmp);
 		free(key);
 	}
-	printf("DIV : %s, type : %d\n", tmp.t_string, tmp.type);	//µð¹ö±ë¿ë
+	//printf("DIV : %s, type : %d\n", tmp.t_string, tmp.type);	//µð¹ö±ë¿ë
 	return tmp;
 }
 
@@ -605,7 +605,7 @@ T_OBJ fn_list() {
 		}
 		cnt++;
 	}
-	printf("list size : %d , %d\n", tmp_list->list_size, cnt);	//µð¹ö±ë¿ë
+	//printf("list size : %d , %d\n", tmp_list->list_size, cnt);	//µð¹ö±ë¿ë
 	T_OBJ head;
 	T_OBJ* pre_obj = &head;
 	head.type = T_LIST;
@@ -958,7 +958,7 @@ T_OBJ fn_make_list() {
 		}
 		cnt++;
 	}
-	printf("make_list size : %d , %d\n", tmp_list->list_size, cnt);	//µð¹ö±ë¿ë
+	//printf("make_list size : %d , %d\n", tmp_list->list_size, cnt);	//µð¹ö±ë¿ë
 	T_OBJ head;
 	T_OBJ* pre_obj = &head;
 	head.type = T_LIST;
