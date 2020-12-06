@@ -85,6 +85,24 @@ T_OBJ fn_atom(){ // ATOM function
 			else
 				cur_node = cur_node->next;
 		}
+		else if (currentType == LEFT_PAREN){
+			left_paren_Count++;
+			int pCount = 1;
+			cur_node = cur_node->next;
+			while (cur_node != NULL && pCount != 0){ // move cur_node to end of corresponding instruction
+				cur_node = cur_node->next;
+				if (cur_node->value.type == LEFT_PAREN){
+					left_paren_Count++;
+					pCount++;
+				}
+				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
+					cur_node = cur_node->next;
+					right_paren_Count++;
+					pCount--;
+				}
+			}
+			return result;
+		}
 		else{
 			printf("ERROR : Syntax Error\n");
 			return result;

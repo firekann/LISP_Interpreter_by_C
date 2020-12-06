@@ -94,9 +94,10 @@ int main(int argc, char* argv[])
 
 		left_paren_Count = 0;
 		right_paren_Count = 0;
-		system("pause");
+		
 	}
-
+	system("pause");
+		
 	free_list(obj_list);
 	free_dict(dict);
 	fclose(in_fp);
