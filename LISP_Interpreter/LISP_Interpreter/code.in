@@ -1,7 +1,0 @@
-(setq q '(setq a 10))
-(setq a (list 'q q 10 '(+ 'setq a 10)))
-(setq b (list 'setq (setq a '('(10 10)10 10))))
-(CAR b)
-(NTH 4 '(0 1 2 3 4 5 6))
-(NTH 3 a)
-(NTH 3 'A)
