@@ -636,7 +636,7 @@ T_OBJ fn_subst(){
 		cur_node = cur_node->next;
 	}
 	else {
-		printf("ERROR : NO LEFT_PAREN FOR LIST\n");
+		printf("ERROR : NO LEFT_PAREN FOR SUBST\n");
 		return return_false();
 	}
 
@@ -644,25 +644,34 @@ T_OBJ fn_subst(){
         cur_node = cur_node->next;
     }
     else{
-        printf("ERROR");
+		printf("ERROR : TYPE ERROR FOR SUBST\n");
         return return_false();
     }
 
+	if (cur_node->value.type != IDENT) {
+		printf("ERROR : TYPE ERROR FOR SUBST\n");
+		return return_false();
+	}
     //대체할 단어
-    char to_subst = cur_node->value.t_string;
+    char* to_subst = cur_node->value.t_string;
     cur_node = cur_node->next;
 
     if(cur_node->value.type == SQUOTE){
         cur_node = cur_node->next;
     }
     else{
-        printf("ERROR");
+		printf("ERROR : TYPE ERROR FOR SUBST\n");
         return return_false();
     } 
 
+	if (cur_node->value.type != IDENT) {
+		printf("ERROR : TYPE ERROR FOR SUBST\n");
+		return return_false();
+	}
     //대체될 단어
-    char for_subst = cur_node->value.t_string;
+    char* for_subst = cur_node->value.t_string;
     cur_node = cur_node->next;
+
 	T_OBJ tmp;
 	if (cur_node->value.type == SQUOTE) {
 		cur_node = cur_node->next;
@@ -673,12 +682,12 @@ T_OBJ fn_subst(){
 		cur_node = cur_node->next;
 	}
 	else {
-		printf("ERROR : TYPE ERROR FOR ASSOC\n");
+		printf("ERROR : TYPE ERROR FOR SUBST\n");
 		return return_false();
 	}
 
 	if (tmp.type != T_LIST) {
-		printf("ERROR : TYPE ERROR FOR ASSOC\n");
+		printf("ERROR : TYPE ERROR FOR SUBST\n");
 		return return_false();
 	}
 
@@ -687,7 +696,7 @@ T_OBJ fn_subst(){
 		cur_node = cur_node->next;
 	}
 	else {
-		printf("ERROR : NO RIGHT_PAREN FOR ASSOC\n");
+		printf("ERROR : NO RIGHT_PAREN FOR SUBST\n");
 		return return_false();
 	}
 	
@@ -697,7 +706,16 @@ T_OBJ fn_subst(){
 		list = listNext;
 		listNext = listNext->next;
 		list = list->t_list_value;
-		return *list;
+		if (list->type == STRING) {
+			if (!strcmp(list->t_string, for_subst)) {
+				free(list->t_string);
+				list->t_string = to_subst;
+				break;
+			}
+		}
+		else if (list->type == INT) {
+
+		}
 	}
-	
+	return tmp;
 }
