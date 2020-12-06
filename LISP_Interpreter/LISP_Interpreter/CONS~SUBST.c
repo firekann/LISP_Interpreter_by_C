@@ -603,25 +603,47 @@ T_OBJ fn_remove(){
 		return return_false();
 	}
 
-
-	
-
-	T_OBJ* list = NULL;
-	T_OBJ* deleteNode;
-	deleteNode = &tmp;
-	deleteNode = deleteNode->next;
-	list = &tmp;
-	
-	for (int i = 0; i < tmp.t_int; i++){
-		if (!strcmp(((T_OBJ*)(deleteNode->t_list_value))->t_string, target)) {
-			list->next = deleteNode->next;
-			free(deleteNode);
+	c_LIST* tmp_list = initialize_list();
+	T_OBJ *list;
+	T_OBJ *listNext = &tmp;
+	int cnt = 0;
+	for (int i = 0; i < tmp.t_int; i++) {
+		list = listNext;
+		listNext = listNext->next;
+		list = list->t_list_value;
+		if (strcmp(list->t_string, target)) {
+			insert_list_node(tmp_list, list);
+			cnt++;
 		}
-		list = deleteNode;
-		deleteNode = deleteNode->next;
 	}
-	
-	return *deleteNode;
+	T_OBJ head;
+	T_OBJ* pre_obj = &head;
+	head.type = T_LIST;
+	head.t_int = cnt;
+	head.next = head.t_list_value = NULL;
+	head.t_bool = true;
+	if (cnt == 0) {	//인자가 0개면 길이가 0인 리스트를 반환한다.
+		return head;
+	}
+	//아니라면 임시로 만든 리스트의 값을 이용해서 리스트를 생성한다.
+	LIST_NODE* tmp_node = tmp_list->head;
+	while (tmp_node != NULL) {
+		if (head.t_list_value == NULL) {
+			head.t_list_value = &(tmp_node->value);
+		}
+		else {
+			T_OBJ* tmp = malloc(sizeof(T_OBJ));
+			tmp->type = T_LIST;
+			tmp->t_int = cnt;
+			tmp->t_list_value = &(tmp_node->value);
+			tmp->t_bool = true;
+			tmp->next = NULL;
+			pre_obj->next = tmp;
+			pre_obj = tmp;
+		}
+		tmp_node = tmp_node->next;
+	}
+	return head;
 }
 
 //SUBST
