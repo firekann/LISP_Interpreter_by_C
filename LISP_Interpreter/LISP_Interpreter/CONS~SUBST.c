@@ -12,7 +12,7 @@
 #include "OP~NTH.h"
 
 #include "CONS~SUBST.h"
-//머야 씨펄
+
 /*
 필요한 함수 목록: car , cdr 
 */
