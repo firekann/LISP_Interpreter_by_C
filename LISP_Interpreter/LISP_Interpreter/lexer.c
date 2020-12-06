@@ -234,12 +234,12 @@ int lex() {
 						if (tmp_arr[i] == CAR) {
 							tmp_obj.type = CAR;
 							strcpy(tmp_obj.t_string, "CAR");
-							printf("Next token is: %d, Next lexeme is %s\n", CAR, "CAR");
+							//printf("Next token is: %d, Next lexeme is %s\n", CAR, "CAR");
 						}
 						else {
 							tmp_obj.type = CDR;
 							strcpy(tmp_obj.t_string, "CDR");
-							printf("Next token is: %d, Next lexeme is %s\n", CDR, "CDR");
+							//printf("Next token is: %d, Next lexeme is %s\n", CDR, "CDR");
 						}
 						insert_list_node(obj_list, &tmp_obj);
 					}
