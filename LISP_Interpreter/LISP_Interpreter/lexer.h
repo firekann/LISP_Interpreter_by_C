@@ -18,6 +18,7 @@ int nextToken;
 int charClass;
 char lexeme[MAX_LEXEME_LEN];
 char nextChar;
+char preChar;
 int lexLen;
 int token;
 int minusFlag; // to distinguish minus and negative num

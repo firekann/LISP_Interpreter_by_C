@@ -22,13 +22,29 @@ int lookup(char ch) {
 		nextToken = ADD_OP;
 		break;
 	case '-':
-		getChar();
 		addChar();
-		
-		if (nextChar >= 48 && nextChar <= 57){
-			minusFlag = 1;
-			getChar();
-			lex();
+		getChar();
+		if ('0' <= nextChar && nextChar <= '9'){
+			while (charClass == DIGIT) {
+				addChar();
+				getChar();
+			}
+			if (charClass == UNKNOWN && nextChar == '.') {
+				addChar();
+				getChar();
+				while (charClass == DIGIT) {
+					addChar();
+					getChar();
+				}
+				nextToken = FLOAT;
+			}
+			else {
+				nextToken = INT;
+			}
+			if (nextChar != ' ') {
+				minusFlag = 1;
+				preChar = nextChar;
+			}
 		}
 		else{
 			nextChar = '-';
@@ -117,6 +133,10 @@ of input and determine its character class */
 /*****************************************************/
 void getChar() {
 	if ((nextChar = getc(in_fp)) != EOF) {
+		if (minusFlag) {
+			minusFlag = 0;
+			nextChar = preChar;
+		}
 		//nextChar = command[cursor++];
 		if (isalpha(nextChar))
 			charClass = LETTER;
