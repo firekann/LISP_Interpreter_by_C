@@ -33,7 +33,7 @@ T_OBJ call_fn() {
 	else if (tmp_node->value.type == STRINGP) return fn_stringp();
 	else if (tmp_node->value.type == IF) return fn_if();
 	else if (tmp_node->value.type == COND) return fn_cond();
-	else return;
+	else return return_false();
 }
 
 T_OBJ return_false() {
