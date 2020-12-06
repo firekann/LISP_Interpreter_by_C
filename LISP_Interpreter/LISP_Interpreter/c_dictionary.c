@@ -2,6 +2,7 @@
 #include "c_dictionary.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 c_DICT* initialize_dict() {
 	c_DICT* dict = (c_DICT*)malloc(sizeof(c_DICT));

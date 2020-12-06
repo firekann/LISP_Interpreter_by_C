@@ -1,6 +1,8 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "c_list.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 c_LIST* initialize_list() {
 	c_LIST* list = (c_LIST*)malloc(sizeof(c_LIST));
