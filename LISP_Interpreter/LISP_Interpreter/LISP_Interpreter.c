@@ -51,29 +51,33 @@ int main(int argc, char* argv[])
 			if (has_dict_key(dict, cur_node->value.t_string)) {
 				T_OBJ tmp = get_dict_obj(dict, cur_node->value.t_string);
 				print_obj(&tmp);
+				printf("\n");
 			}
 			else {
 				printf("NO IDENT\n");
 			}
 			cur_node = cur_node->next;
-			continue;
-		}
-		T_OBJ decision = call_fn();
-		if (left_paren_Count != right_paren_Count) {
-			printf("NIL\n");
-		}
-		else if (decision.t_bool == true) {
-			print_obj(&decision);
-		}
-		else if (decision.t_bool == false){
-			print_obj(&decision);
-		}
-		else if (nextToken == EOF) {
-			printf("EOF\n");
-			return 0;
 		}
 		else {
-			printf("NIL\n");
+			T_OBJ decision = call_fn();
+			if (left_paren_Count != right_paren_Count) {
+				printf("NIL\n");
+			}
+			else if (decision.t_bool == true) {
+				print_obj(&decision);
+				printf("\n");
+			}
+			else if (decision.t_bool == false) {
+				print_obj(&decision);
+				printf("\n");
+			}
+			else if (nextToken == EOF) {
+				printf("EOF\n");
+				return 0;
+			}
+			else {
+				printf("NIL\n");
+			}
 		}
 
 		/*
@@ -105,25 +109,28 @@ int main(int argc, char* argv[])
 
 void print_obj(T_OBJ* value) {
 	if (value->type == INT) {
-		printf("%d\n", value->t_int);
+		printf("%d ", value->t_int);
 	}
 	else if (value->type == FLOAT) {
-		printf("%f\n", value->t_float);
+		printf("%f ", value->t_float);
 	}
 	else if (value->type == STRING) {
-		printf("%s\n", value->t_string);
+		printf("%s ", value->t_string);
+	}
+	else if (value->type == SQUOTE) {
+		printf("\' ");
 	}
 	else if (value->type == BOOLEAN) {
 		if (value->t_bool == false){
-			printf("NIL\n");
+			printf("NIL ");
 		}
 		else{
-			printf("T\n");
+			printf("T ");
 		}
 	}
 	else if (value->type == T_LIST) {
 		print_list(value);
-		printf("\n");
+		printf(" ");
 	}
 }
 
@@ -136,18 +143,7 @@ void print_list(T_OBJ* value) {
 		list = listNext;
 		listNext = listNext->next;
 		list = list->t_list_value;
-		if (list->type == INT) {
-			printf("%d", list->t_int);
-		}
-		else if (list->type == FLOAT) {
-			printf("%f", list->t_float);
-		}
-		else if (list->type == STRING) {
-			printf("%s", list->t_string);
-		}
-		else if (list->type == T_LIST) {
-			print_list(list);
-		}
+		print_obj(list);
 		if (i + 1 != value->t_int)
 			printf(" ");
 	}
