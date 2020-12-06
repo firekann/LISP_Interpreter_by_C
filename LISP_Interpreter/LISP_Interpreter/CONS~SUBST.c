@@ -285,29 +285,7 @@ T_OBJ fn_length(){
 		cur_node = cur_node->next;
 	}
 	else {
-<<<<<<< HEAD
 		printf("ERROR : NO LEFT_PAREN FOR LIST\n");
-=======
-		printf("ERROR");
-		return;
-	}
-	T_OBJ tmp;
-	if (cur_node->value.type == SQUOTE) {
-		cur_node = cur_node->next;
-		tmp = fn_make_list();
-	}
-	else if (cur_node->value.type == IDENT) {
-		tmp = get_dict_obj(dict, cur_node->value.t_string);
-		cur_node = cur_node->next;
-	}
-	else {
-		printf("ERROR : TYPE ERROR FOR LENGTH\n");
-		return return_false();
-	}
-
-	if (tmp.type != T_LIST) {
-		printf("ERROR : TYPE ERROR FOR LENGTH\n");
->>>>>>> f49a5b35a518b062742e979cb7909f22a16c0b9d
 		return return_false();
 	}
 
@@ -372,7 +350,6 @@ T_OBJ fn_length(){
 	LIST_NODE* tmp_node = tmp_list->head;
 	T_OBJ result;
 	result.type = INT;
-<<<<<<< HEAD
 	result.t_int = cnt;
 	while (tmp_node != NULL) {
 		if (head.t_list_value == NULL) {
@@ -399,17 +376,6 @@ T_OBJ fn_length(){
 	else {
 		printf("ERROR : NO RIGHT_PAREN FOR LIST\n");
 		free_list(tmp_list);
-=======
-	result.t_int = tmp.t_int;
-	result.t_bool = true;
-	if (cur_node->value.type == RIGHT_PAREN) {
-		right_paren_Count++;
-		cur_node = cur_node->next;
-        return result;
-	}
-	else {
-		printf("ERROR : NO RIGHT_PAREN FOR LENGTH\n");
->>>>>>> f49a5b35a518b062742e979cb7909f22a16c0b9d
 		return return_false();
 	}
 }
