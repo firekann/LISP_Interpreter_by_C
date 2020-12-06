@@ -349,3 +349,4 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 LISP_Interpreter/LISP_Interpreter/code.in
+LISP_Interpreter/LISP_Interpreter/LISP_Interpreter.vcxproj
