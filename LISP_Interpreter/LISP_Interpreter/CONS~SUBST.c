@@ -571,6 +571,9 @@ T_OBJ fn_remove(){
 		printf("ERROR : NO LEFT_PAREN FOR LIST\n");
 		return return_false();
 	}
+	if (cur_node->value.type == SQUOTE) {
+		cur_node = cur_node->next;
+	}
     char* target = cur_node->value.t_string;
     cur_node = cur_node->next;
 
