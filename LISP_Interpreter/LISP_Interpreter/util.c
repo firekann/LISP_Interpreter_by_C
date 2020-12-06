@@ -15,7 +15,7 @@ T_OBJ call_fn() {
 	else if (tmp_node->value.type == CONS) return fn_cons();
 	else if (tmp_node->value.type == REVERSE) return fn_reverse();
 	else if (tmp_node->value.type == APPEND) return fn_append();
-	else if (tmp_node->value.type == LENGTH) return;
+	else if (tmp_node->value.type == LENGTH) return fn_length();
 	else if (tmp_node->value.type == MEMBER) return fn_member();
 	else if (tmp_node->value.type == ASSOC) return fn_assoc();
 	else if (tmp_node->value.type == REMOVE) return fn_remove();

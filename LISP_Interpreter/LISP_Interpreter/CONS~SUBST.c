@@ -578,7 +578,6 @@ T_OBJ fn_remove(){
 		return return_false();
 	}
 
-
 	c_LIST* tmp_list = initialize_list();
 	T_OBJ *list;
 	T_OBJ *listNext = &tmp;
