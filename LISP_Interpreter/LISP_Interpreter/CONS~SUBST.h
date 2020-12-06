@@ -9,7 +9,7 @@
 
 T_OBJ fn_cons();
 T_OBJ fn_reverse();
-int fn_length();
+T_OBJ fn_length();
 T_OBJ fn_member();
 T_OBJ fn_remove();
 T_OBJ fn_assoc();
