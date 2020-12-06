@@ -542,20 +542,22 @@ T_OBJ fn_assoc(){
 		left_paren_Count++;
 		cur_node = cur_node->next;
 		cur_node = cur_node->next;
-        
+		cur_node = cur_node->next;
 	}
 	else {
 		printf("ERROR : NO LEFT_PAREN FOR LIST\n");
 		return return_false();
 	}
+	char* target = cur_node->value.t_string;
+	printf("%c", &target);
+	cur_node = cur_node->next;
 
-    char target = cur_node->value.t_string;
     bool isfind = false;
     while(cur_node->next == NULL){
-        cur_node = cur_node->next;
         if(cur_node->value.t_string == target){
             break;
         }
+		cur_node = cur_node->next;
     }
     if(cur_node->next == NULL){
         printf("ERROR");
@@ -570,20 +572,22 @@ T_OBJ fn_assoc(){
 		if (cur_node->value.type == SQUOTE) {
 			cur_node = cur_node->next;
 			if (cur_node->value.type == LEFT_PAREN) {	//괄호가 올 경우 처리함
-				LIST_NODE* tmp_node = cur_node->next;
-				if (tmp_node->value.type == INT || tmp_node->value.type == FLOAT || tmp_node->value.type == STRING || tmp_node->value.type == BOOLEAN) {
-					//괄호 뒤의 토큰이 함수가 아니면 make_list를 호출해준다.
-					tmp = fn_make_list();
-				}
-				else {
-					//괄호 뒤의 토큰이 함수라면 call_fn을 통해서 함수를 호출해준다.
-					tmp = call_fn();
-				}
+				tmp = fn_make_list();
 			}
 			else {	//괄호가 없을 경우 현재 노드의 value를 tmp에 할당
 				tmp = cur_node->value;
 				cur_node = cur_node->next;
+				if (!(tmp.type == INT || tmp.type == FLOAT || tmp.type == STRING || tmp.type == BOOLEAN || tmp.type == T_LIST)) {
+					tmp.type = STRING;
+				}
 			}
+		}
+		else if (cur_node->value.type == LEFT_PAREN) {	//이 경우 함수를 호출해서 처리함.
+			tmp = call_fn();
+		}
+		else if (cur_node->value.type == INT || cur_node->value.type == FLOAT || cur_node->value.type == STRING || cur_node->value.type == BOOLEAN) {
+			tmp = cur_node->value;
+			cur_node = cur_node->next;
 		}
 		else if (cur_node->value.type == IDENT) {
 			tmp = get_dict_obj(dict, cur_node->value.t_string);
@@ -608,14 +612,13 @@ T_OBJ fn_assoc(){
 		}
 		cnt++;
 	}
-
-
-	printf("list size : %d , %d\n", tmp_list->list_size, cnt);	//디버깅용
+	//printf("list size : %d , %d\n", tmp_list->list_size, cnt);	//디버깅용
 	T_OBJ head;
 	T_OBJ* pre_obj = &head;
 	head.type = T_LIST;
 	head.t_int = cnt;
 	head.next = head.t_list_value = NULL;
+	head.t_bool = true;
 	if (cnt == 0) {	//인자가 0개면 길이가 0인 리스트를 반환한다.
 		return head;
 	}
@@ -630,6 +633,8 @@ T_OBJ fn_assoc(){
 			tmp->type = T_LIST;
 			tmp->t_int = cnt;
 			tmp->t_list_value = &(tmp_node->value);
+			tmp->t_bool = true;
+			tmp->next = NULL;
 			pre_obj->next = tmp;
 			pre_obj = tmp;
 		}
@@ -639,15 +644,13 @@ T_OBJ fn_assoc(){
 		right_paren_Count++;
 		cur_node = cur_node->next;
 		free(tmp_list);
-        return head;
-
+		return head;
 	}
 	else {
 		printf("ERROR : NO RIGHT_PAREN FOR LIST\n");
 		free_list(tmp_list);
 		return return_false();
 	}
-
 }
 
 //REMOVE
