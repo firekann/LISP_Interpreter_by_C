@@ -23,32 +23,32 @@
     <ProjectGuid>{DFA76E9F-635A-4E6F-BA5D-6A7451D41C8A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>LISPInterpreter</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -155,7 +155,6 @@
     <ClCompile Include="CONS~SUBST.c" />
     <ClCompile Include="c_dictionary.c" />
     <ClCompile Include="c_list.c" />
-    <ClCompile Include="c_stack.c" />
     <ClCompile Include="lexer.c" />
     <ClCompile Include="LISP_Interpreter.c" />
     <ClCompile Include="OP~NTH.c" />
@@ -166,7 +165,6 @@
     <ClInclude Include="CONS~SUBST.h" />
     <ClInclude Include="c_dictionary.h" />
     <ClInclude Include="c_list.h" />
-    <ClInclude Include="c_stack.h" />
     <ClInclude Include="lexer.h" />
     <ClInclude Include="OP~NTH.h" />
     <ClInclude Include="type.h" />

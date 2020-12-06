@@ -290,6 +290,12 @@ int lex() {
 		/* Parentheses and operators */
 	case UNKNOWN:
 		lookup(nextChar);
+		if (minusFlag == 1){
+			minusFlag = 0;
+			if (nextChar == ')')
+				charClass = UNKNOWN;
+			break;
+		}
 		getChar();
 		break;
 
@@ -314,13 +320,13 @@ int lex() {
 
 		strcpy(lexeme, tempLexeme);
 		lexeme[lexLen + 1] = '\0';
-		minusFlag = 0;
+		
 		nextToken = tempToken;
 	}
 	else{
 		T_OBJ tmp_obj = create_obj();
 		insert_list_node(obj_list, &tmp_obj);
-		printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
+		//printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
 	}
 
 	/* print to code.out file */
