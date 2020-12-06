@@ -86,17 +86,9 @@ int main(int argc, char* argv[])
 
 		/*
 		DICT_NODE* dict_node = dict->head;
-		while (dict_node != NULL)
-		{
-		printf("key : %s , ", dict_node->key);
-		printf("type : %d , ", dict_node->value.type);
-		if (dict_node->value.type == T_LIST) {
-		printf("\n");
-		print_list(&(dict_node->value));
-		printf("\n");
-		}
-		else printf("value : %s\n", dict_node->value.t_string);
-		dict_node = dict_node->next;
+		while (dict_node != NULL) {
+			print_obj(&(dict_node->value));
+			dict_node = dict_node->next;
 		}
 		*/
 
