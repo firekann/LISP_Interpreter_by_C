@@ -101,6 +101,7 @@ T_OBJ fn_atom(){ // ATOM function
 					pCount--;
 				}
 			}
+			right_paren_Count++;
 			return result;
 		}
 		else{
@@ -219,6 +220,20 @@ T_OBJ fn_null(){ // NULL function
 		}
 		else
 			return result; // not NIL
+	}
+	else if (currentType == INT || currentType == FLOAT){
+		cur_node = cur_node->next;
+		currentType = cur_node->value.type;
+		if (currentType == RIGHT_PAREN){ // end of instruction
+			right_paren_Count++;
+			cur_node = cur_node->next;
+			if (cur_node->value.type == EOF || cur_node->value.type == SEMI_COLON || cur_node->value.type == RIGHT_PAREN || cur_node->value.type == LEFT_PAREN){
+				result.t_bool = false;
+				return result;
+			}
+			right_paren_Count++;
+			printf("ERROR : Syntax Error\n");
+		}
 	}
 	else{
 		while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN){ // move cur_node to end of corresponding instruction
@@ -2342,7 +2357,7 @@ T_OBJ fn_if(){ // IF function
 	// condition part
 	if (currentType == LEFT_PAREN){
 		retValue = call_fn();
-		while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && retValue.t_bool == false){ // move cur_node to end of corresponding instruction
+		while (cur_node != NULL && cur_node->value.type != RIGHT_PAREN && cur_node->value.type != LEFT_PAREN){ // move cur_node to end of corresponding instruction
 			cur_node = cur_node->next;
 			if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
 				cur_node = cur_node->next;
@@ -2396,6 +2411,9 @@ T_OBJ fn_if(){ // IF function
 				printf("ERROR : Syntax Error\n");
 				return result;
 			}
+			result.t_bool = retValue.t_bool;
+			if (cur_node->value.type == RIGHT_PAREN)
+				currentType = retValue.type;
 		}
 		else {
 			return result;
@@ -2406,25 +2424,26 @@ T_OBJ fn_if(){ // IF function
 			left_paren_Count++;
 			int pCount = 1;
 			cur_node = cur_node->next;
-			while (cur_node != NULL && pCount != 0){ // move cur_node to end of corresponding instruction
+			while (cur_node != NULL && cur_node->next != NULL && pCount != 0){ // move cur_node to end of corresponding instruction
 				cur_node = cur_node->next;
 				if (cur_node->value.type == LEFT_PAREN){
 					left_paren_Count++;
 					pCount++;
 				}
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
-					cur_node = cur_node->next;
 					right_paren_Count++;
 					pCount--;
 				}
 			}
+			cur_node = cur_node->next;
 			if (cur_node == NULL){
 				printf("ERROR : Syntax Error\n");
 				return result;
 			}
 		}
 		else {
-			return result;
+			if (cur_node->value.type != RIGHT_PAREN)
+				return result;
 		}
 	}
 	// executive part with false condition
@@ -2441,11 +2460,11 @@ T_OBJ fn_if(){ // IF function
 					pCount++;
 				}
 				if (cur_node != NULL && cur_node->value.type == RIGHT_PAREN){
-					cur_node = cur_node->next;
 					right_paren_Count++;
 					pCount--;
 				}
 			}
+			cur_node = cur_node->next;
 			if (cur_node == NULL){
 				printf("ERROR : Syntax Error\n");
 				return result;
