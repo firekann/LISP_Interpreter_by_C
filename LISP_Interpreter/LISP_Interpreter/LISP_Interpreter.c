@@ -38,13 +38,13 @@ int main(int argc, char* argv[])
 		lex();
 	} while (nextToken != EOF);
 
-	
+	/*
 	LIST_NODE* node = obj_list->head;
 	while (node != NULL) {
 	printf("Next token is: %d, Next lexeme is %s\n", node->value.type, node->value.t_string);
 	node = node->next;
 	}
-	
+	*/
 
 	cur_node = obj_list->head;
 	while (cur_node->value.type != EOF) {

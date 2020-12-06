@@ -4,6 +4,20 @@
 #include <string.h>
 #include <stdlib.h>
 
+T_OBJ free_obj(T_OBJ* obj_ptr) {
+	if (obj_ptr == NULL) return;
+	if (obj_ptr->type != T_LIST) {
+		return;
+	}
+	if (((T_OBJ*)(obj_ptr->t_list_value))->type == T_LIST) {
+		free_obj(obj_ptr->t_list_value);
+		free(obj_ptr->t_list_value);
+		free_obj(obj_ptr->next);
+		free(obj_ptr);
+	}
+	return;
+}
+
 c_DICT* initialize_dict() {
 	c_DICT* dict = (c_DICT*)malloc(sizeof(c_DICT));
 	dict->dict_size = 0;
@@ -24,6 +38,7 @@ void free_dict(c_DICT* dict) {
 
 void free_node(DICT_NODE* node) {
 	free(node->key);	//key 할당 해제
+	free_obj(&(node->value));
 	free(node);	//노드 할당 해제
 }
 
