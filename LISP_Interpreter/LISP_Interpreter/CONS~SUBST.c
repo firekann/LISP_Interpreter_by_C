@@ -586,17 +586,17 @@ T_OBJ fn_remove(){
 	deleteNode = &tmp;
 	deleteNode = deleteNode->next;
 	list = &tmp;
-	/*
+	
 	for (int i = 0; i < tmp.t_int; i++){
-		if (!strcmp(deleteNode. == target)) {
+		if (!strcmp(((T_OBJ*)(deleteNode->t_list_value))->t_string, target)) {
 			list->next = deleteNode->next;
 			free(deleteNode);
 		}
 		list = deleteNode;
 		deleteNode = deleteNode->next;
 	}
-	*/
-	return *list;
+	
+	return *deleteNode;
 }
 
 //SUBST
