@@ -40,8 +40,8 @@ int main(int argc, char* argv[])
 	/*
 	LIST_NODE* node = obj_list->head;
 	while (node != NULL) {
-		printf("Next token is: %d, Next lexeme is %s\n", node->value.type, node->value.t_string);
-		node = node->next;
+	printf("Next token is: %d, Next lexeme is %s\n", node->value.type, node->value.t_string);
+	node = node->next;
 	}
 	*/
 
@@ -65,6 +65,9 @@ int main(int argc, char* argv[])
 		else if (decision.t_bool == true) {
 			print_obj(&decision);
 		}
+		else if (decision.t_bool == false){
+			print_obj(&decision);
+		}
 		else if (nextToken == EOF) {
 			printf("EOF\n");
 			return 0;
@@ -77,21 +80,23 @@ int main(int argc, char* argv[])
 		DICT_NODE* dict_node = dict->head;
 		while (dict_node != NULL)
 		{
-			printf("key : %s , ", dict_node->key);
-			printf("type : %d , ", dict_node->value.type);
-			if (dict_node->value.type == T_LIST) {
-				printf("\n");
-				print_list(&(dict_node->value));
-				printf("\n");
-			}
-			else printf("value : %s\n", dict_node->value.t_string);
-			dict_node = dict_node->next;
+		printf("key : %s , ", dict_node->key);
+		printf("type : %d , ", dict_node->value.type);
+		if (dict_node->value.type == T_LIST) {
+		printf("\n");
+		print_list(&(dict_node->value));
+		printf("\n");
+		}
+		else printf("value : %s\n", dict_node->value.t_string);
+		dict_node = dict_node->next;
 		}
 		*/
 
 		left_paren_Count = 0;
 		right_paren_Count = 0;
+		system("pause");
 	}
+
 	free_list(obj_list);
 	free_dict(dict);
 	fclose(in_fp);
@@ -109,7 +114,12 @@ void print_obj(T_OBJ* value) {
 		printf("%s\n", value->t_string);
 	}
 	else if (value->type == BOOLEAN) {
-		printf("T\n");
+		if (value->t_bool == false){
+			printf("NIL\n");
+		}
+		else{
+			printf("T\n");
+		}
 	}
 	else if (value->type == T_LIST) {
 		print_list(value);
