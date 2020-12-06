@@ -278,7 +278,7 @@ T_OBJ fn_append(){
 //LENGTH
 //EX) (length 'a 'b) => 2
 // APPEND 하고나서 길이를 계산해준다
-int fn_length(){
+T_OBJ fn_length(){
     int tmp_count = 0;
 	if (cur_node->value.type == LEFT_PAREN) {	//왼쪽 괄호 확인
 		left_paren_Count++;
@@ -337,10 +337,14 @@ int fn_length(){
             }
             cnt++;
     	}
+
+	T_OBJ result;
+	result.type = INT;
+	result.t_int = cnt;
 	if (cur_node->value.type == RIGHT_PAREN) {
 		right_paren_Count++;
 		cur_node = cur_node->next;
-        return cnt;
+        return result;
 		free(tmp_list);
 	}
 	else {
