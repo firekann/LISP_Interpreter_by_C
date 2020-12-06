@@ -27,7 +27,7 @@
 T_OBJ fn_cons(){
     if(cur_node->value.type == LEFT_PAREN){
         left_paren_Count++;
-        cur_node = cur_node->next;
+		left_paren_Count++;
         cur_node = cur_node->next;
     }
     else{
@@ -45,7 +45,7 @@ T_OBJ fn_cons(){
                 cur_node = cur_node->next;
                 if (cur_node->value.type == LEFT_PAREN) {	//괄호가 올 경우 처리함
                     LIST_NODE* tmp_node = cur_node->next;
-                    if (tmp_node->value.type == INT || tmp_node->value.type == FLOAT || tmp_node->value.type == STRING || tmp_node->value.type == BOOLEAN) {
+                    if (tmp_node->value.type == INT || tmp_node->value.type == FLOAT || tmp_node->value.type == STRING || tmp_node->value.type == BOOLEAN || tmp_node->value.type == SQUOTE) {
                         //괄호 뒤의 토큰이 함수가 아니면 make_list를 호출해준다.
                         tmp = fn_make_list();
                     }

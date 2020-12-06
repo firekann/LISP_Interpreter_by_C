@@ -1,2 +1,3 @@
-(setq x '(("lee" "homin") 10 (20 30 40) (setq y 10)))
-(SETQ a '((10 (20 30 40) (setq y 10)) TOM HAPPY JOHN DANIEL (list 'a '10 '"asdfa" 'asd x)))
+(SETQ X 5);
+X
+(LIST 'X X 'Y);

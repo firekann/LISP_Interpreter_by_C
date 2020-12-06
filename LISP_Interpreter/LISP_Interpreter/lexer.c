@@ -320,7 +320,7 @@ int lex() {
 	else{
 		T_OBJ tmp_obj = create_obj();
 		insert_list_node(obj_list, &tmp_obj);
-		// printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
+		printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
 	}
 
 	/* print to code.out file */
