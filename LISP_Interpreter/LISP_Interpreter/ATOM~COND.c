@@ -709,10 +709,29 @@ T_OBJ fn_equal(){ // EQUAL function
 		else
 			return result;
 	}
-	else if (currentType == SQUOTE){ // if it meets list
-		
+	else if (currentType == SQUOTE){ // if it meets list		
 		cur_node = cur_node->next;
 		if (cur_node->value.type == IDENT){
+			beforeType = IDENT;
+			strcat(stringValue, cur_node->value.t_string);
+			cur_node = cur_node->next;
+		}
+		else if (cur_node->value.type == INT){
+			beforeType = IDENT;
+			strcat(stringValue, cur_node->value.t_string);
+			cur_node = cur_node->next;
+		}
+		else if (cur_node->value.type == FLOAT){
+			beforeType = IDENT;
+			strcat(stringValue, cur_node->value.t_string);
+			cur_node = cur_node->next;
+		}
+		else if (cur_node->value.type == STRING){
+			beforeType = IDENT;
+			strcat(stringValue, cur_node->value.t_string);
+			cur_node = cur_node->next;
+		}
+		else if (cur_node->value.type == NIL){
 			beforeType = IDENT;
 			strcat(stringValue, cur_node->value.t_string);
 			cur_node = cur_node->next;
@@ -944,6 +963,26 @@ T_OBJ fn_equal(){ // EQUAL function
 		
 		cur_node = cur_node->next;
 		if (cur_node->value.type == IDENT){
+			currentType = IDENT;
+			strcat(listValue, cur_node->value.t_string);
+			cur_node = cur_node->next;
+		}
+		else if (cur_node->value.type == INT){
+			currentType = IDENT;
+			strcat(listValue, cur_node->value.t_string);
+			cur_node = cur_node->next;
+		}
+		else if (cur_node->value.type == FLOAT){
+			currentType = IDENT;
+			strcat(listValue, cur_node->value.t_string);
+			cur_node = cur_node->next;
+		}
+		else if (cur_node->value.type == STRING){
+			currentType = IDENT;
+			strcat(listValue, cur_node->value.t_string);
+			cur_node = cur_node->next;
+		}
+		else if (cur_node->value.type == NIL){
 			currentType = IDENT;
 			strcat(listValue, cur_node->value.t_string);
 			cur_node = cur_node->next;
