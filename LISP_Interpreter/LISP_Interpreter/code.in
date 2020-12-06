@@ -1,1 +1,1 @@
-(REMOVE D '(A D B C D E D F));
+(reverse (a b c d))
