@@ -91,6 +91,10 @@ T_OBJ fn_add() {
 		right_paren_Count++;
 		cur_node = cur_node->next;
 	}
+	else {
+		printf("ERROR : NO LEFT_PAREN FOR ADD\n");
+		return return_false();
+	}
 	T_OBJ tmp;
 	tmp.type = type;
 	tmp.next = NULL;
@@ -218,6 +222,10 @@ T_OBJ fn_sub() {
 		right_paren_Count++;
 		cur_node = cur_node->next;
 	}
+	else {
+		printf("ERROR : NO LEFT_PAREN FOR SUB\n");
+		return return_false();
+	}
 	T_OBJ tmp;
 	tmp.type = type;
 	tmp.next = NULL;
@@ -325,6 +333,10 @@ T_OBJ fn_mul() {
 	if (cur_node->value.type == RIGHT_PAREN) {
 		right_paren_Count++;
 		cur_node = cur_node->next;
+	}
+	else {
+		printf("ERROR : NO LEFT_PAREN FOR MUL\n");
+		return return_false();
 	}
 	T_OBJ tmp;
 	tmp.type = type;
@@ -452,6 +464,10 @@ T_OBJ fn_div() {
 		right_paren_Count++;
 		cur_node = cur_node->next;
 	}
+	else {
+		printf("ERROR : NO LEFT_PAREN FOR DIV\n");
+		return return_false();
+	}
 	T_OBJ tmp;
 	tmp.type = type;
 	tmp.next = NULL;
@@ -501,14 +517,11 @@ T_OBJ fn_setq() {
 	if (cur_node->value.type == SQUOTE) {	//이 경우는 리스트 입력을 받음
 		cur_node = cur_node->next;
 		res = fn_make_list();
-		insert_dict_node(dict, symbol, &res);
+		//insert_dict_node(dict, symbol, &res);
 	}
 	else if (cur_node->value.type == LEFT_PAREN) {	// 괄호가 나올 경우 처리함
 		res = call_fn();	//리턴값이 있는 함수의 경우
-		if (res.type == INT || res.type == FLOAT || res.type == STRING || res.type == T_LIST || res.type == BOOLEAN || res.type == NIL) {
-			insert_dict_node(dict, symbol, &res);
-		}
-		else {
+		if(!(res.type == INT || res.type == FLOAT || res.type == STRING || res.type == T_LIST || res.type == BOOLEAN || res.type == NIL)) {
 			printf("ERROR : TYPE ERROR FOR SETQ\n");
 			free(symbol);
 			return return_false();
@@ -516,13 +529,11 @@ T_OBJ fn_setq() {
 	}
 	else if (cur_node->value.type == IDENT) {	//a=b의 경우 b의 값을 a에 대입 하는 느낌
 		res = get_dict_obj(dict, cur_node->value.t_string);	//dict에서 먼저 값을 가져옴
-		insert_dict_node(dict, symbol, &res);
 		cur_node = cur_node->next;
 	}
 	else {
 		// 정수 실수 문자열의 경우
 		if (cur_node->value.type == INT || cur_node->value.type == FLOAT || cur_node->value.type == STRING) {
-			insert_dict_node(dict, symbol, &(cur_node->value));
 			res = cur_node->value;
 			cur_node = cur_node->next;
 		}
@@ -532,11 +543,12 @@ T_OBJ fn_setq() {
 			return return_false();
 		}
 	}
-	free(symbol);
 	if (cur_node->value.type == RIGHT_PAREN) {
 		right_paren_Count++;
 		cur_node = cur_node->next;
 		res.t_bool = true;
+		insert_dict_node(dict, symbol, &res);
+		free(symbol);
 		return res;
 	}
 	else {
